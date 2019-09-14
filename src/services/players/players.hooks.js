@@ -9,8 +9,10 @@ const {
   validate
 } = require("feathers-hooks-common");
 
+const disallowIfGameStarted = require("../../hooks/disallow-if-game-started");
 const validateRemovePlayer = require("../../hooks/validate-remove-player");
 const checkGameExists = require("../../hooks/check-game-exists");
+const startGameIfReady = require("../../hooks/start-game-if-ready");
 
 module.exports = {
   before: {
@@ -18,15 +20,13 @@ module.exports = {
     find: [],
     get: [],
     create: [
-      context => {
-        console.log(context.params);
-      },
       keep("game", "seat"),
       required("game", "seat"),
       alterItems((data, context) => {
         data.user = context.params.user._id;
         data.seat = String(data.seat);
         data.key = `${data.game}/${data.seat}`;
+        data.ready = false;
       }),
       validate(data => {
         if (data.seat != "0" && data.seat != "1") {
@@ -36,7 +36,13 @@ module.exports = {
       checkGameExists()
     ],
     update: [disallow()],
-    patch: [disallow()],
+    patch: [
+      disallowIfGameStarted(),
+      keep("ready"),
+      alterItems((data, context) => {
+        data.ready = String(data.ready) == "true";
+      })
+    ],
     remove: [restrictToOwner({ ownerField: "user" }), validateRemovePlayer()]
   },
 
@@ -46,7 +52,7 @@ module.exports = {
     get: [],
     create: [],
     update: [],
-    patch: [],
+    patch: [startGameIfReady()],
     remove: []
   },
 

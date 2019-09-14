@@ -1,19 +1,22 @@
 // Use this hook to manipulate incoming or outgoing data.
 // For more information on hooks see: http://docs.feathersjs.com/api/hooks.html
 
-const errors = require("@feathersjs/errors");
 const { callingParams } = require("feathers-hooks-common");
 
 // eslint-disable-next-line no-unused-vars
 module.exports = (options = {}) => {
   return async context => {
     const params = callingParams()(context);
-    const current = await context.app
+    const players = await context.app
       .service("players")
-      .get(context.id, params);
-    const game = await context.app.service("games").get(current.game, params);
-    if (game.started) {
-      throw new errors.BadRequest("Game already started.");
+      .find({ query: { game: context.result.game }, ...params });
+    if (players.length == 2 && players.every(p => p.ready)) {
+      await context.app.service("games").patch(
+        context.result.game,
+        { started: true },
+        // must be an internal call or will get rejected
+        { ...params, provider: undefined }
+      );
     }
     return context;
   };

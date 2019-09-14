@@ -27,7 +27,7 @@ module.exports = {
     ],
     update: [disallow()],
     patch: [
-      restrictToOwner({ ownerField: "host" }),
+      iff(isProvider("external"), restrictToOwner({ ownerField: "host" })),
       iff(isProvider("external"), keep("comment")),
       disallowIfStarted()
     ],
