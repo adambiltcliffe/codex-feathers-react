@@ -1,4 +1,5 @@
 const CodexGame = require("@adam.biltcliffe/codex").default;
+const fillTemplate = require("es6-dynamic-template");
 
 /* eslint-disable no-unused-vars */
 exports.Demo = class Demo {
@@ -25,10 +26,9 @@ exports.Demo = class Demo {
         });
         result += "\n";
       }
-      return result;
     } catch (e) {
       result += "An error occurred.";
-      return result;
     }
+    return fillTemplate(result, { player1: "Player 1", player2: "Player 2" });
   }
 };
