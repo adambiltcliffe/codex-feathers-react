@@ -3,11 +3,7 @@ const { Demo } = require("./demo.class");
 const hooks = require("./demo.hooks");
 
 module.exports = function(app) {
-  const paginate = app.get("paginate");
-
-  const options = {
-    paginate
-  };
+  const options = {};
 
   const middleware = (req, res) => {
     res.format({

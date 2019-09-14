@@ -2,6 +2,7 @@ const app = require("../../src/app");
 
 describe("'users' service", () => {
   const userInfo = {
+    username: "test",
     email: "test@example.com",
     password: "examplepassword"
   };
@@ -26,17 +27,21 @@ describe("'users' service", () => {
       provider: "rest",
       authenticated: true
     };
-    const pages = await service.find({
+    const data = await service.find({
       query: { email: userInfo.email },
       ...params
     });
-    expect(pages.data).toHaveLength(1);
-    expect(pages.data[0].password).toBeUndefined();
+    expect(data).toHaveLength(1);
+    expect(data[0].password).toBeUndefined();
   }, 15000);
 
   it("only allows modifications to the authenticated user", async () => {
     expect.assertions(2);
-    const newUserInfo = { email: "another@example.com", password: "dragon" };
+    const newUserInfo = {
+      username: "another",
+      email: "another@example.com",
+      password: "dragon"
+    };
     const { _id } = await app.service("users").create(newUserInfo);
     const params = {
       provider: "rest",
