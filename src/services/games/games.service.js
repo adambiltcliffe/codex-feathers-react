@@ -1,11 +1,11 @@
 // Initializes the `games` service on path `/games`
-const { Games } = require('./games.class');
-const createModel = require('../../models/games.model');
-const hooks = require('./games.hooks');
+const { Games } = require("./games.class");
+const createModel = require("../../models/games.model");
+const hooks = require("./games.hooks");
 
-module.exports = function (app) {
+module.exports = function(app) {
   const Model = createModel(app);
-  const paginate = app.get('paginate');
+  const paginate = app.get("paginate");
 
   const options = {
     Model,
@@ -13,10 +13,10 @@ module.exports = function (app) {
   };
 
   // Initialize our service with any options it requires
-  app.use('/games', new Games(options, app));
+  app.use("/games", new Games(options, app));
 
   // Get our initialized service so that we can register hooks
-  const service = app.service('games');
+  const service = app.service("games");
 
   service.hooks(hooks);
 };

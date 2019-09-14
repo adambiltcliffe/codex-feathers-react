@@ -1,10 +1,10 @@
-const users = require('./users/users.service.js');
-const games = require('./games/games.service.js');
-const players = require('./players/players.service.js');
-const steps = require('./steps/steps.service.js');
-const demo = require('./demo/demo.service.js');
+const users = require("./users/users.service.js");
+const games = require("./games/games.service.js");
+const players = require("./players/players.service.js");
+const steps = require("./steps/steps.service.js");
+const demo = require("./demo/demo.service.js");
 // eslint-disable-next-line no-unused-vars
-module.exports = function (app) {
+module.exports = function(app) {
   app.configure(users);
   app.configure(games);
   app.configure(players);

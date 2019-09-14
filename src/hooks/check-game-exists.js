@@ -12,7 +12,7 @@ module.exports = (options = {}) => {
         .service("games")
         .get(context.data.game, callingParams()(context));
       return context;
-    } catch {
+    } catch (e) {
       throw new errors.BadRequest("Game doesn't exist.");
     }
   };

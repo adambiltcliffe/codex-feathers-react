@@ -1,11 +1,11 @@
 // Initializes the `steps` service on path `/steps`
-const { Steps } = require('./steps.class');
-const createModel = require('../../models/steps.model');
-const hooks = require('./steps.hooks');
+const { Steps } = require("./steps.class");
+const createModel = require("../../models/steps.model");
+const hooks = require("./steps.hooks");
 
-module.exports = function (app) {
+module.exports = function(app) {
   const Model = createModel(app);
-  const paginate = app.get('paginate');
+  const paginate = app.get("paginate");
 
   const options = {
     Model,
@@ -13,10 +13,10 @@ module.exports = function (app) {
   };
 
   // Initialize our service with any options it requires
-  app.use('/steps', new Steps(options, app));
+  app.use("/steps", new Steps(options, app));
 
   // Get our initialized service so that we can register hooks
-  const service = app.service('steps');
+  const service = app.service("steps");
 
   service.hooks(hooks);
 };

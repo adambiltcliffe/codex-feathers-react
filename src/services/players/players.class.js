@@ -1,5 +1,3 @@
-const { Service } = require('feathers-nedb');
+const { Service } = require("feathers-nedb");
 
-exports.Players = class Players extends Service {
-  
-};
+exports.Players = class Players extends Service {};
