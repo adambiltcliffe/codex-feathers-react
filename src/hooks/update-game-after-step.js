@@ -10,10 +10,13 @@ module.exports = (options = {}) => {
       ...callingParams()(context),
       provider: undefined
     };
+    const state = context.params.newState;
+    const ap = state.playerList[state.activePlayerIndex];
     await context.app.service("games").patch(
       context.result.game,
       {
-        currentState: context.params.newState,
+        currentState: state,
+        activePlayer: ap,
         nextStep: context.result.index + 1
       },
       internalCallParams

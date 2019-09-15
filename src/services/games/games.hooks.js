@@ -3,6 +3,7 @@ const { restrictToOwner } = require("feathers-authentication-hooks");
 const {
   alterItems,
   disallow,
+  discard,
   iff,
   isProvider,
   keep,
@@ -38,7 +39,7 @@ module.exports = {
   },
 
   after: {
-    all: [],
+    all: [iff(isProvider("external"), discard("currentState"))],
     find: [],
     get: [],
     create: [addHostToNewGame()],

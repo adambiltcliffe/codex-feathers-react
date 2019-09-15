@@ -18,10 +18,10 @@ module.exports = (options = {}) => {
     if (!game.started) {
       throw new errors.BadRequest("Game not yet started.");
     }
-    if (game.nextIndex != context.data.index) {
+    if (game.nextStep != context.data.index) {
       throw new errors.BadRequest("Incorrect index.");
     }
-    if (game.activePlayer != context.params.user) {
+    if (game.activePlayer != context.params.user._id) {
       throw new errors.BadRequest("Not the active player in that game.");
     }
     try {

@@ -1,9 +1,15 @@
 const { authenticate } = require("@feathersjs/authentication").hooks;
-const { disallow, iff, isProvider, keep } = require("feathers-hooks-common");
+const {
+  alterItems,
+  disallow,
+  iff,
+  isProvider,
+  keep
+} = require("feathers-hooks-common");
+const pick = require("lodash/pick");
 
 const validateCreateStep = require("../../hooks/validate-create-step");
 const generateStepResult = require("../../hooks/generate-step-result");
-
 const updateGameAfterStep = require("../../hooks/update-game-after-step");
 
 module.exports = {
@@ -23,7 +29,12 @@ module.exports = {
 
   after: {
     all: [
-      // sanitise hidden information (from find or get)
+      iff(
+        isProvider("external"),
+        alterItems((item, context) => {
+          item.newInfos = pick(item.newInfos, [context.params.user._id]);
+        })
+      )
     ],
     find: [],
     get: [],
