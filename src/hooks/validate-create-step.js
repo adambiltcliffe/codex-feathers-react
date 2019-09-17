@@ -16,7 +16,7 @@ module.exports = (options = {}) => {
       .service("games")
       .get(context.data.game, internalCallParams);
     if (!game.started) {
-      throw new errors.BadRequest("Game not yet started.");
+      throw new errors.BadRequest("Game not started.");
     }
     if (game.nextStep != context.data.index) {
       throw new errors.BadRequest("Incorrect index.");

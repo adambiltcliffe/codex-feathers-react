@@ -1,7 +1,8 @@
 {
   "host": "localhost",
   "port": 3030,
-  "public": "../public/",
+  "public": "../public",
+  "dist": "../dist",
   "paginate": {
     "default": 10,
     "max": 50

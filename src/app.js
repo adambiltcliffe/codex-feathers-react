@@ -29,7 +29,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(favicon(path.join(app.get("public"), "favicon.ico")));
 // Host the public folder
-app.use("/", express.static(app.get("public")));
+app.use("/", express.static(app.get("dist")));
 
 // Set up Plugins and providers
 app.configure(express.rest());
