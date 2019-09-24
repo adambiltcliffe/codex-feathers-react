@@ -1,6 +1,7 @@
 import { createLogic } from "redux-logic";
 
 import authLogics from "./features/auth/logic";
+import lobbyLogics from "./features/lobby/logic";
 
 const feathersErrorLogic = createLogic({
   type: "*",
@@ -13,6 +14,6 @@ const feathersErrorLogic = createLogic({
   }
 });
 
-const logics = [...authLogics, feathersErrorLogic];
+const logics = [...authLogics, ...lobbyLogics, feathersErrorLogic];
 
 export default logics;

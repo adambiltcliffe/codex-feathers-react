@@ -7,33 +7,33 @@ const authSlice = createSlice({
     reauthenticate(state, action) {
       state.pendingLogin = true;
     },
-    reauthenticate_success(state, action) {
+    reauthenticateSuccess(state, action) {
       state.pendingLogin = false;
       state.user = action.payload.user;
     },
-    reauthenticate_failure(state, action) {
+    reauthenticateFailure(state, action) {
       state.pendingLogin = false;
       state.user = null;
     },
     authenticate(state, action) {
       state.pendingLogin = true;
     },
-    authenticate_success(state, action) {
+    authenticateSuccess(state, action) {
       state.pendingLogin = false;
       state.user = action.payload.user;
     },
-    authenticate_failure(state, action) {
+    authenticateFailure(state, action) {
       state.pendingLogin = false;
       state.user = null;
     },
     logout(state, action) {
       state.pendingLogout = true;
     },
-    logout_success(state, action) {
+    logoutSuccess(state, action) {
       state.pendingLogout = false;
       state.user = null;
     },
-    logout_failure(state, action) {
+    logoutFailure(state, action) {
       state.pendingLogout = false;
     }
   }

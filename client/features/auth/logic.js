@@ -8,8 +8,8 @@ const reauthLogic = createLogic({
   latest: true,
   processOptions: {
     dispatchReturn: true,
-    successType: authSlice.actions.reauthenticate_success,
-    failType: authSlice.actions.reauthenticate_failure
+    successType: authSlice.actions.reauthenticateSuccess,
+    failType: authSlice.actions.reauthenticateFailure
   },
   process({ getState, action, client }) {
     return client.reAuthenticate();
@@ -22,8 +22,8 @@ const authLogic = createLogic({
   latest: true,
   processOptions: {
     dispatchReturn: true,
-    successType: authSlice.actions.authenticate_success,
-    failType: authSlice.actions.authenticate_failure
+    successType: authSlice.actions.authenticateSuccess,
+    failType: authSlice.actions.authenticateFailure
   },
   process({ getState, action, client }) {
     return client.authenticate({
@@ -43,8 +43,8 @@ const logoutLogic = createLogic({
   latest: true,
   processOptions: {
     dispatchReturn: true,
-    successType: authSlice.actions.logout_success,
-    failType: authSlice.actions.logout_failure
+    successType: authSlice.actions.logoutSuccess,
+    failType: authSlice.actions.logoutFailure
   },
   process({ getState, action, client }) {
     return client.logout();

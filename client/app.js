@@ -18,6 +18,9 @@ import { createLogicMiddleware } from "redux-logic";
 import logics from "./logics";
 
 import authSlice, { authActions } from "./features/auth/slice";
+import lobbySlice, { lobbyActions } from "./features/lobby/slice";
+
+import Lobby from "./ui/Lobby";
 
 const client = feathers();
 client.configure(socketio(io()));
@@ -38,6 +41,7 @@ const frobSlice = createSlice({
 
 const rootReducer = combineReducers({
   auth: authSlice.reducer,
+  lobby: lobbySlice.reducer,
   frob: frobSlice.reducer
 });
 const logicMiddleware = createLogicMiddleware(logics, { client });
@@ -54,7 +58,7 @@ function TestComponent(props) {
   }, []);
   return (
     <>
-      <div>Hello, {JSON.stringify(everything)}!</div>
+      <div>Hello, world!</div>
       <button onClick={() => store.dispatch(frobSlice.actions.frob())}>
         Frob
       </button>
@@ -68,6 +72,7 @@ function TestComponent(props) {
         Log out
       </button>
       <div>User object is: {JSON.stringify(user)}</div>
+      {user ? <Lobby /> : <></>}
     </>
   );
 }
