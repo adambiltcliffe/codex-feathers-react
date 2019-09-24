@@ -13,10 +13,11 @@ import io from "socket.io-client";
 import feathers from "@feathersjs/feathers";
 import socketio from "@feathersjs/socketio-client";
 import auth from "@feathersjs/authentication-client";
-import { createLogic, createLogicMiddleware } from "redux-logic";
 
-import authSlice from "./features/auth/slice";
-import authLogics from "./features/auth/logic";
+import { createLogicMiddleware } from "redux-logic";
+import logics from "./logics";
+
+import authSlice, { authActions } from "./features/auth/slice";
 
 const client = feathers();
 client.configure(socketio(io()));
@@ -39,23 +40,7 @@ const rootReducer = combineReducers({
   auth: authSlice.reducer,
   frob: frobSlice.reducer
 });
-
-const feathersErrorLogic = createLogic({
-  type: "*",
-  transform({ getState, action }, next) {
-    if (action.payload && action.payload.type == "FeathersError") {
-      action.error = true;
-      action.payload = action.payload.toJSON();
-    }
-    next(action);
-  }
-});
-
-const logicMiddleware = createLogicMiddleware(
-  [...authLogics, feathersErrorLogic],
-  { client }
-);
-
+const logicMiddleware = createLogicMiddleware(logics, { client });
 const store = configureStore({
   reducer: rootReducer,
   middleware: [logicMiddleware, ...getDefaultMiddleware({ thunk: false })]
@@ -65,7 +50,7 @@ function TestComponent(props) {
   const everything = useSelector(s => s);
   const user = useSelector(s => s.auth.user);
   useEffect(() => {
-    store.dispatch(authSlice.actions.reauthenticate());
+    store.dispatch(authActions.reauthenticate());
   }, []);
   return (
     <>
@@ -76,10 +61,10 @@ function TestComponent(props) {
       <button onClick={() => store.dispatch(frobSlice.actions.unfrob())}>
         Unfrob
       </button>
-      <button onClick={() => store.dispatch(authSlice.actions.authenticate())}>
+      <button onClick={() => store.dispatch(authActions.authenticate())}>
         Log in
       </button>
-      <button onClick={() => store.dispatch(authSlice.actions.logout())}>
+      <button onClick={() => store.dispatch(authActions.logout())}>
         Log out
       </button>
       <div>User object is: {JSON.stringify(user)}</div>
