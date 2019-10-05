@@ -12,7 +12,7 @@ module.exports = (options = {}) => {
       callingParams()(context)
     );
     if (current.started) {
-      throw new errors.BadRequest("Game already started.");
+      throw new errors.Unprocessable("Game already started.");
     }
     return context;
   };

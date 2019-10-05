@@ -13,7 +13,7 @@ module.exports = (options = {}) => {
       .get(context.id, params);
     const game = await context.app.service("games").get(current.game, params);
     if (game.started) {
-      throw new errors.BadRequest("Game already started.");
+      throw new errors.Unprocessable("Game already started.");
     }
     return context;
   };

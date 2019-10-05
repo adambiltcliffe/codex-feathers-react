@@ -9,10 +9,13 @@ const {
   validate
 } = require("feathers-hooks-common");
 
+const errors = require("@feathersjs/errors");
+
 const disallowIfGameStarted = require("../../hooks/disallow-if-game-started");
 const validateRemovePlayer = require("../../hooks/validate-remove-player");
-const checkGameExists = require("../../hooks/check-game-exists");
+const checkGameExistsAndNotPlaying = require("../../hooks/check-game-exists-and-not-playing");
 const startGameIfReady = require("../../hooks/start-game-if-ready");
+const updateTimestampOnGame = require("../../hooks/update-timestamp-on-game");
 
 module.exports = {
   before: {
@@ -33,7 +36,7 @@ module.exports = {
           return { seat: "Illegal seat number" };
         }
       }),
-      checkGameExists()
+      checkGameExistsAndNotPlaying()
     ],
     update: [disallow()],
     patch: [
@@ -50,17 +53,27 @@ module.exports = {
     all: [discard("key")],
     find: [],
     get: [],
-    create: [],
+    create: [updateTimestampOnGame()],
     update: [],
-    patch: [startGameIfReady()],
-    remove: []
+    patch: [updateTimestampOnGame(), startGameIfReady()],
+    remove: [updateTimestampOnGame()]
   },
 
   error: {
     all: [],
     find: [],
     get: [],
-    create: [],
+    create: [
+      ctx => {
+        if (ctx.error.errorType == "uniqueViolated") {
+          ctx.error = new errors.Conflict(
+            "That seat is already occupied.",
+            ctx.error
+          );
+          return ctx;
+        }
+      }
+    ],
     update: [],
     patch: [],
     remove: []

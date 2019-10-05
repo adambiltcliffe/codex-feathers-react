@@ -12,6 +12,8 @@ const validateCreateStep = require("../../hooks/validate-create-step");
 const generateStepResult = require("../../hooks/generate-step-result");
 const updateGameAfterStep = require("../../hooks/update-game-after-step");
 
+const updateTimestampOnGame = require("../../hooks/update-timestamp-on-game");
+
 module.exports = {
   before: {
     all: [authenticate("jwt")],
@@ -38,7 +40,7 @@ module.exports = {
     ],
     find: [],
     get: [],
-    create: [updateGameAfterStep()],
+    create: [updateTimestampOnGame(), updateGameAfterStep()],
     update: [],
     patch: [],
     remove: []

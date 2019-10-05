@@ -10,12 +10,11 @@ module.exports = (options = {}) => {
     const params = callingParams()(context);
     const current = await context.service.get(context.id, params);
     if (current.seat == "0") {
-      throw new errors.BadRequest("Cannot leave a game you are hosting.");
+      throw new errors.Unprocessable("Cannot leave a game you are hosting.");
     }
-    console.log(Object.keys(context));
     const game = await context.app.service("games").get(current.game, params);
     if (game.started) {
-      throw new errors.BadRequest("Game already started.");
+      throw new errors.Unprocessable("Game already started.");
     }
     return context;
   };

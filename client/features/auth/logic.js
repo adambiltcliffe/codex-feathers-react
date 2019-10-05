@@ -26,10 +26,11 @@ const authLogic = createLogic({
     failType: authSlice.actions.authenticateFailure
   },
   process({ getState, action, client }) {
+    const name = action.payload;
     return client.authenticate({
       strategy: "local",
-      email: "alf@example.com",
-      password: "alf1"
+      email: `${name}@example.com`,
+      password: `${name}1`
     });
   }
 });

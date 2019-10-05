@@ -17,7 +17,7 @@ module.exports = (options = {}) => {
       {
         currentState: state,
         activePlayer: ap,
-        nextStep: context.result.index + 1
+        nextStep: parseInt(context.result.index, 10) + 1
       },
       internalCallParams
     );

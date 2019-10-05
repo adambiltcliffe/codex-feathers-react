@@ -10,17 +10,73 @@ const lobbySlice = createSlice({
     openLobbySuccess(state, action) {
       state.loading = false;
       state.open = true;
-      state.games = action.payload;
+      state.games = {};
+      action.payload.forEach(g => {
+        state.games[g._id] = g;
+      });
     },
     openLobbyFailure(state, action) {
       state.loading = false;
       state.open = false;
       state.games = null;
-      state.error = action.payload;
     },
     closeLobby(state, action) {
       state.open = false;
       state.games = null;
+    },
+    createGame(state, action) {
+      state.pendingCreate = true;
+    },
+    createGameSuccess(state, action) {
+      state.pendingCreate = false;
+    },
+    createGameFailure(state, action) {
+      state.pendingCreate = false;
+    },
+    joinGame(state, action) {
+      state.games[action.payload.gameId].pendingUpdate = true;
+    },
+    joinGameSuccess(state, action) {
+      // do nothing, just wait for the update
+    },
+    joinGameFailure(state, action) {
+      state.games[action.payload.gameId].pendingUpdate = false;
+    },
+    leaveGame(state, action) {
+      state.games[action.payload.gameId].pendingUpdate = true;
+    },
+    leaveGameSuccess(state, action) {
+      // do nothing, just wait for the update
+    },
+    leaveGameFailure(state, action) {
+      state.games[action.payload.gameId].pendingUpdate = false;
+    },
+    setReady(state, action) {
+      state.games[action.payload.gameId].pendingUpdate = true;
+    },
+    setReadySuccess(state, action) {
+      // do nothing, just wait for the update
+    },
+    setReadyFailure(state, action) {
+      state.games[action.payload.gameId].pendingUpdate = false;
+    },
+    onGameCreated(state, action) {
+      const currentGame = state.games[action.payload._id];
+      if (
+        currentGame === undefined ||
+        currentGame.updatedAt < action.payload.updatedAt
+      ) {
+        state.games[action.payload._id] = action.payload;
+      }
+    },
+    onGameChanged(state, action) {
+      const currentGame = state.games[action.payload._id];
+      if (
+        currentGame === undefined ||
+        currentGame.updatedAt < action.payload.updatedAt
+      ) {
+        state.games[action.payload._id] = action.payload;
+      }
     }
   }
 });

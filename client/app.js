@@ -18,6 +18,7 @@ import { createLogicMiddleware } from "redux-logic";
 import logics from "./logics";
 
 import authSlice, { authActions } from "./features/auth/slice";
+import alertSlice, { alertActions } from "./features/alert/slice";
 import lobbySlice, { lobbyActions } from "./features/lobby/slice";
 
 import Lobby from "./ui/Lobby";
@@ -40,6 +41,7 @@ const frobSlice = createSlice({
 });
 
 const rootReducer = combineReducers({
+  alert: alertSlice.reducer,
   auth: authSlice.reducer,
   lobby: lobbySlice.reducer,
   frob: frobSlice.reducer
@@ -50,23 +52,40 @@ const store = configureStore({
   middleware: [logicMiddleware, ...getDefaultMiddleware({ thunk: false })]
 });
 
+client.service("games").on("created", (data, context) => {
+  store.dispatch(lobbyActions.onGameCreated(data));
+});
+client.service("games").on("patched", (data, context) => {
+  store.dispatch(lobbyActions.onGameChanged(data));
+});
+
 function TestComponent(props) {
-  const everything = useSelector(s => s);
   const user = useSelector(s => s.auth.user);
+  const alert = useSelector(s => s.alert.currentAlert);
   useEffect(() => {
     store.dispatch(authActions.reauthenticate());
   }, []);
   return (
     <>
       <div>Hello, world!</div>
+      {alert ? (
+        <div>
+          <strong>
+            {alert.timestamp}: {alert.message}
+          </strong>
+        </div>
+      ) : null}
       <button onClick={() => store.dispatch(frobSlice.actions.frob())}>
         Frob
       </button>
       <button onClick={() => store.dispatch(frobSlice.actions.unfrob())}>
         Unfrob
       </button>
-      <button onClick={() => store.dispatch(authActions.authenticate())}>
-        Log in
+      <button onClick={() => store.dispatch(authActions.authenticate("alf"))}>
+        Log in (alf)
+      </button>
+      <button onClick={() => store.dispatch(authActions.authenticate("bob"))}>
+        Log in (bob)
       </button>
       <button onClick={() => store.dispatch(authActions.logout())}>
         Log out

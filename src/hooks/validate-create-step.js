@@ -16,18 +16,18 @@ module.exports = (options = {}) => {
       .service("games")
       .get(context.data.game, internalCallParams);
     if (!game.started) {
-      throw new errors.BadRequest("Game not started.");
+      throw new errors.Unprocessable("Game not started.");
     }
     if (game.nextStep != context.data.index) {
-      throw new errors.BadRequest("Incorrect index.");
+      throw new errors.Unprocessable("Incorrect index.");
     }
     if (game.activePlayer != context.params.user._id) {
-      throw new errors.BadRequest("Not the active player in that game.");
+      throw new errors.Unprocessable("Not the active player in that game.");
     }
     try {
       CodexGame.checkAction(game.currentState, context.data.action);
     } catch (e) {
-      throw new errors.BadRequest(e);
+      throw new errors.Unprocessable(e);
     }
     return context;
   };
