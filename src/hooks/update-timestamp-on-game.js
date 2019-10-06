@@ -12,11 +12,13 @@ module.exports = (options = {}) => {
     };
     await context.app
       .service("games")
-      .patch(
-        context.result.game,
-        { updatedAt: Date.now() },
-        internalCallParams
-      );
+      .patch(context.result.game, { updatedAt: Date.now() }, internalCallParams)
+      .catch(err => {
+        // swallow 404s here because its possible the game was just deleted
+        if (err.code != 404) {
+          throw err;
+        }
+      });
     return context;
   };
 };

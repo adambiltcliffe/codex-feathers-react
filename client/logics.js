@@ -5,6 +5,8 @@ import lobbyLogics from "./features/lobby/logic";
 
 import { alertActions } from "./features/alert/slice";
 
+const errors = require("@feathersjs/errors");
+
 function getCounter() {
   let value = 0;
   return () => {
@@ -32,6 +34,10 @@ const feathersErrorLogic = createLogic({
       // JSONify FeathersErrors because otherwise Redux complains
       if (action.payload.error.type == "FeathersError") {
         action.payload.error = action.payload.error.toJSON();
+      } else {
+        action.payload.error = new errors.GeneralError(
+          action.payload.error
+        ).toJSON();
       }
     }
     next(action);

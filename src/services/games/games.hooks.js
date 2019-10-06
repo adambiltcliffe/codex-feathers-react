@@ -13,6 +13,7 @@ const {
 
 const keyBy = require("lodash/keyBy");
 
+const cascadeRemoveGame = require("../../hooks/cascade-remove-game");
 const disallowIfStarted = require("../../hooks/disallow-if-started");
 const addHostToNewGame = require("../../hooks/add-host-to-new-game");
 
@@ -67,20 +68,17 @@ module.exports = {
         disallowIfStarted()
       )
     ],
-    remove: [disallow()]
+    remove: [restrictToOwner({ ownerField: "host" }), disallowIfStarted()]
   },
 
   after: {
-    all: [
-      iff(isProvider("external"), discard("currentState")),
-      fastJoin(resolvers)
-    ],
+    all: [discard("currentState"), fastJoin(resolvers)],
     find: [],
     get: [],
     create: [addHostToNewGame()],
     update: [],
     patch: [],
-    remove: []
+    remove: [cascadeRemoveGame()]
   },
 
   error: {

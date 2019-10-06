@@ -27,24 +27,10 @@ const client = feathers();
 client.configure(socketio(io()));
 client.configure(auth());
 
-const frobSlice = createSlice({
-  slice: "frob",
-  initialState: false,
-  reducers: {
-    frob(state, action) {
-      return true;
-    },
-    unfrob(state, action) {
-      return false;
-    }
-  }
-});
-
 const rootReducer = combineReducers({
   alert: alertSlice.reducer,
   auth: authSlice.reducer,
-  lobby: lobbySlice.reducer,
-  frob: frobSlice.reducer
+  lobby: lobbySlice.reducer
 });
 const logicMiddleware = createLogicMiddleware(logics, { client });
 const store = configureStore({
@@ -57,6 +43,9 @@ client.service("games").on("created", (data, context) => {
 });
 client.service("games").on("patched", (data, context) => {
   store.dispatch(lobbyActions.onGameChanged(data));
+});
+client.service("games").on("removed", (data, context) => {
+  store.dispatch(lobbyActions.onGameRemoved(data));
 });
 
 function TestComponent(props) {
@@ -75,12 +64,6 @@ function TestComponent(props) {
           </strong>
         </div>
       ) : null}
-      <button onClick={() => store.dispatch(frobSlice.actions.frob())}>
-        Frob
-      </button>
-      <button onClick={() => store.dispatch(frobSlice.actions.unfrob())}>
-        Unfrob
-      </button>
       <button onClick={() => store.dispatch(authActions.authenticate("alf"))}>
         Log in (alf)
       </button>

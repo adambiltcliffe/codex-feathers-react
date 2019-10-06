@@ -20,6 +20,10 @@ function joinGame(dispatch, gameId) {
   dispatch(lobbyActions.joinGame({ gameId }));
 }
 
+function deleteGame(dispatch, gameId) {
+  dispatch(lobbyActions.deleteGame({ gameId }));
+}
+
 function leaveGame(dispatch, gameId) {
   dispatch(lobbyActions.leaveGame({ gameId }));
 }
@@ -62,6 +66,11 @@ function GameRow({ game }) {
         ])}
       >
         Not ready
+      </Button>
+      <Button
+        onClick={useCallback(() => deleteGame(dispatch, game._id), [game._id])}
+      >
+        Delete
       </Button>
     </div>
   );

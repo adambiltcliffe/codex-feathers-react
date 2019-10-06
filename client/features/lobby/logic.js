@@ -31,6 +31,32 @@ const newGameLogic = createLogic({
   }
 });
 
+const deleteLogic = createLogic({
+  type: lobbySlice.actions.deleteGame,
+  process({ getState, action, client }, dispatch, done) {
+    client
+      .service("games")
+      .remove(action.payload.gameId)
+      .then(() => {
+        dispatch(
+          lobbySlice.actions.deleteGameSuccess({
+            gameId: action.payload.gameId
+          })
+        );
+        done();
+      })
+      .catch(error => {
+        dispatch(
+          lobbySlice.actions.deleteGameFailure({
+            error,
+            gameId: action.payload.gameId
+          })
+        );
+        done();
+      });
+  }
+});
+
 const joinLogic = createLogic({
   type: lobbySlice.actions.joinGame,
   process({ getState, action, client }, dispatch, done) {
@@ -60,7 +86,14 @@ const leaveLogic = createLogic({
     const game = state.lobby.games[action.payload.gameId];
     const playerEntry = find(game.players, p => p.user == state.auth.user._id);
     if (playerEntry === undefined) {
-      throw new Error("Can't leave a game you're not playing.");
+      dispatch(
+        lobbySlice.actions.leaveGameFailure({
+          error: new Error("Can't leave a game you're not playing."),
+          gameId: action.payload.gameId
+        })
+      );
+      done();
+      return;
     }
     client
       .service("players")
@@ -81,8 +114,48 @@ const leaveLogic = createLogic({
   }
 });
 
-const setReadyLogic = null;
+const setReadyLogic = createLogic({
+  type: lobbySlice.actions.setReady,
+  process({ getState, action, client }, dispatch, done) {
+    const state = getState();
+    const game = state.lobby.games[action.payload.gameId];
+    const playerEntry = find(game.players, p => p.user == state.auth.user._id);
+    if (playerEntry === undefined) {
+      dispatch(
+        lobbySlice.actions.leaveGameFailure({
+          error: new Error("You're not playing that game."),
+          gameId: action.payload.gameId
+        })
+      );
+      done();
+      return;
+    }
+    client
+      .service("players")
+      .patch(playerEntry._id, { ready: action.payload.ready })
+      .then(() => {
+        dispatch(lobbySlice.actions.setReadySuccess());
+        done();
+      })
+      .catch(error => {
+        dispatch(
+          lobbySlice.actions.setReadyFailure({
+            error,
+            gameId: action.payload.gameId
+          })
+        );
+        done();
+      });
+  }
+});
 
-const lobbyLogics = [openLogic, newGameLogic, joinLogic, leaveLogic];
+const lobbyLogics = [
+  openLogic,
+  newGameLogic,
+  deleteLogic,
+  joinLogic,
+  leaveLogic,
+  setReadyLogic
+];
 
 export default lobbyLogics;

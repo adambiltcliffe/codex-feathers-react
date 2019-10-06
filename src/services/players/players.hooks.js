@@ -2,8 +2,11 @@ const { authenticate } = require("@feathersjs/authentication").hooks;
 const { restrictToOwner } = require("feathers-authentication-hooks");
 const {
   alterItems,
+  disableMultiItemChange,
   disallow,
   discard,
+  iff,
+  isProvider,
   keep,
   required,
   validate
@@ -46,7 +49,13 @@ module.exports = {
         data.ready = String(data.ready) == "true";
       })
     ],
-    remove: [restrictToOwner({ ownerField: "user" }), validateRemovePlayer()]
+    remove: [
+      iff(
+        isProvider("external"),
+        restrictToOwner({ ownerField: "user" }),
+        validateRemovePlayer()
+      )
+    ]
   },
 
   after: {

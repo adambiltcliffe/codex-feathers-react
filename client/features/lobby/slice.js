@@ -33,6 +33,15 @@ const lobbySlice = createSlice({
     createGameFailure(state, action) {
       state.pendingCreate = false;
     },
+    deleteGame(state, action) {
+      state.games[action.payload.gameId].pendingUpdate = true;
+    },
+    deleteGameSuccess(state, action) {
+      delete state.games[action.payload.gameId];
+    },
+    deleteGameFailure(state, action) {
+      state.games[action.payload.gameId].pendingUpdate = false;
+    },
     joinGame(state, action) {
       state.games[action.payload.gameId].pendingUpdate = true;
     },
@@ -77,6 +86,9 @@ const lobbySlice = createSlice({
       ) {
         state.games[action.payload._id] = action.payload;
       }
+    },
+    onGameRemoved(state, action) {
+      delete state.games[action.payload._id];
     }
   }
 });
