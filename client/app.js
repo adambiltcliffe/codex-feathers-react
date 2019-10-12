@@ -1,6 +1,14 @@
 import React, { useEffect } from "react";
 import ReactDOM from "react-dom";
 
+import {
+  BrowserRouter,
+  Link,
+  Route,
+  Switch,
+  useParams
+} from "react-router-dom";
+
 import { Provider, useSelector } from "react-redux";
 import {
   configureStore,
@@ -20,7 +28,10 @@ import logics from "./logics";
 import authSlice, { authActions } from "./features/auth/slice";
 import alertSlice, { alertActions } from "./features/alert/slice";
 import lobbySlice, { lobbyActions } from "./features/lobby/slice";
+import gameSlice, { gameActions } from "./features/game/slice";
 
+import Auth from "./ui/Auth";
+import Game from "./ui/Game";
 import Lobby from "./ui/Lobby";
 
 const client = feathers();
@@ -30,7 +41,8 @@ client.configure(auth());
 const rootReducer = combineReducers({
   alert: alertSlice.reducer,
   auth: authSlice.reducer,
-  lobby: lobbySlice.reducer
+  lobby: lobbySlice.reducer,
+  game: gameSlice.reducer
 });
 const logicMiddleware = createLogicMiddleware(logics, { client });
 const store = configureStore({
@@ -55,8 +67,8 @@ function TestComponent(props) {
     store.dispatch(authActions.reauthenticate());
   }, []);
   return (
-    <>
-      <div>Hello, world!</div>
+    <BrowserRouter>
+      <Auth />
       {alert ? (
         <div>
           <strong>
@@ -64,18 +76,17 @@ function TestComponent(props) {
           </strong>
         </div>
       ) : null}
-      <button onClick={() => store.dispatch(authActions.authenticate("alf"))}>
-        Log in (alf)
-      </button>
-      <button onClick={() => store.dispatch(authActions.authenticate("bob"))}>
-        Log in (bob)
-      </button>
-      <button onClick={() => store.dispatch(authActions.logout())}>
-        Log out
-      </button>
-      <div>User object is: {JSON.stringify(user)}</div>
-      {user ? <Lobby /> : <></>}
-    </>
+      {user ? (
+        <Switch>
+          <Route path="/game/:id">
+            <Game />
+          </Route>
+          <Route>
+            <Lobby />
+          </Route>
+        </Switch>
+      ) : null}
+    </BrowserRouter>
   );
 }
 

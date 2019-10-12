@@ -30,6 +30,7 @@ module.exports = {
           const error = ctx.error;
           if (error.code === undefined) {
             ctx.app.warn(`Unhandled error in app.error hook: ${error.message}`);
+            ctx.app.debug(error.stack);
             const newError = new errors.GeneralError("server error", error);
             ctx.error = newError;
             return ctx;

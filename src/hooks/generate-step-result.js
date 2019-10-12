@@ -14,10 +14,14 @@ module.exports = (options = {}) => {
     const game = await context.app
       .service("games")
       .get(context.data.game, internalCallParams);
+    console.log("before first playAction");
+    console.log(game);
+    console.log(context.data.action);
     const { state, newInfos } = CodexGame.playAction(
       game.currentState,
       context.data.action
     );
+    console.log("after first playAction");
     context.params.newState = state;
     context.data.newInfos = newInfos;
     return context;

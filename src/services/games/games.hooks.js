@@ -1,9 +1,9 @@
 const { authenticate } = require("@feathersjs/authentication").hooks;
+const { protect } = require("@feathersjs/authentication-local").hooks;
 const { restrictToOwner } = require("feathers-authentication-hooks");
 const {
   alterItems,
   disallow,
-  discard,
   fastJoin,
   iff,
   isProvider,
@@ -72,7 +72,7 @@ module.exports = {
   },
 
   after: {
-    all: [discard("currentState"), fastJoin(resolvers)],
+    all: [fastJoin(resolvers), protect("currentState")],
     find: [],
     get: [],
     create: [addHostToNewGame()],

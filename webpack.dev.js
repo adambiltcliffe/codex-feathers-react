@@ -8,6 +8,7 @@ module.exports = merge(common, {
   },
   devServer: {
     contentBase: false,
+    historyApiFallback: true,
     proxy: [
       {
         context: [

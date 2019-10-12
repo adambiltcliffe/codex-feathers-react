@@ -2,7 +2,7 @@ import { createSlice } from "redux-starter-kit";
 
 const lobbySlice = createSlice({
   slice: "lobby",
-  initialState: { loading: false, open: false, games: null },
+  initialState: { loading: false, open: false, games: null, selected: null },
   reducers: {
     openLobby(state, action) {
       state.loading = true;
@@ -29,6 +29,7 @@ const lobbySlice = createSlice({
     },
     createGameSuccess(state, action) {
       state.pendingCreate = false;
+      state.selected = action.payload._id;
     },
     createGameFailure(state, action) {
       state.pendingCreate = false;
@@ -68,6 +69,9 @@ const lobbySlice = createSlice({
     },
     setReadyFailure(state, action) {
       state.games[action.payload.gameId].pendingUpdate = false;
+    },
+    setSelected(state, action) {
+      state.selected = action.payload;
     },
     onGameCreated(state, action) {
       const currentGame = state.games[action.payload._id];
