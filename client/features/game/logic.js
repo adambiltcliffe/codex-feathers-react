@@ -1,3 +1,4 @@
+import { paramsForServer } from "feathers-hooks-common";
 import { createLogic } from "redux-logic";
 
 import gameSlice from "./slice";
@@ -12,7 +13,9 @@ const openLogic = createLogic({
     failType: gameSlice.actions.openGameFailure
   },
   process({ getState, action, client }) {
-    return client.service("games").get(action.payload);
+    return client
+      .service("games")
+      .get(action.payload, paramsForServer({ includeSteps: true }));
   }
 });
 

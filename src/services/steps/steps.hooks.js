@@ -1,4 +1,5 @@
 const { authenticate } = require("@feathersjs/authentication").hooks;
+const { protect } = require("@feathersjs/authentication-local").hooks;
 const {
   alterItems,
   disallow,
@@ -6,13 +7,13 @@ const {
   isProvider,
   keep
 } = require("feathers-hooks-common");
-const pick = require("lodash/pick");
 
 const validateCreateStep = require("../../hooks/validate-create-step");
 const generateStepResult = require("../../hooks/generate-step-result");
 const updateGameAfterStep = require("../../hooks/update-game-after-step");
-
 const updateTimestampOnGame = require("../../hooks/update-timestamp-on-game");
+
+const { newInfoForUser } = require("../../util");
 
 module.exports = {
   before: {
@@ -34,9 +35,10 @@ module.exports = {
       iff(
         isProvider("external"),
         alterItems((item, context) => {
-          item.newInfos = pick(item.newInfos, [context.params.user._id]);
+          item.newInfo = newInfoForUser(item.newInfos, context.params.user._id);
         })
-      )
+      ),
+      protect("newInfos")
     ],
     find: [],
     get: [],

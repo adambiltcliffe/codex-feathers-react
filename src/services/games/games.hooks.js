@@ -8,6 +8,7 @@ const {
   iff,
   isProvider,
   keep,
+  paramsFromClient,
   setNow
 } = require("feathers-hooks-common");
 
@@ -16,6 +17,8 @@ const keyBy = require("lodash/keyBy");
 const cascadeRemoveGame = require("../../hooks/cascade-remove-game");
 const disallowIfStarted = require("../../hooks/disallow-if-started");
 const addHostToNewGame = require("../../hooks/add-host-to-new-game");
+
+const { newInfoForUser } = require("../../util");
 
 const resolvers = {
   joins: {
@@ -44,9 +47,28 @@ const resolvers = {
   }
 };
 
+const stepDetailResolvers = {
+  joins: {
+    steps: {
+      resolver: () => async (record, context) => {
+        record.steps = keyBy(
+          await context.app
+            .service("steps")
+            .find({ query: { game: record._id } }),
+          "index"
+        );
+        Object.values(record.steps).forEach(s => {
+          s.newInfo = newInfoForUser(s.newInfos, context.params.user._id);
+          delete s.newInfos;
+        });
+      }
+    }
+  }
+};
+
 module.exports = {
   before: {
-    all: [authenticate("jwt")],
+    all: [authenticate("jwt"), paramsFromClient("includeSteps")],
     find: [],
     get: [],
     create: [
@@ -74,7 +96,7 @@ module.exports = {
   after: {
     all: [fastJoin(resolvers), protect("currentState")],
     find: [],
-    get: [],
+    get: [iff(ctx => ctx.params.includeSteps, fastJoin(stepDetailResolvers))],
     create: [addHostToNewGame()],
     update: [],
     patch: [],

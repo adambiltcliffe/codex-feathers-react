@@ -1,20 +1,13 @@
 import React, { useEffect } from "react";
 import ReactDOM from "react-dom";
 
-import {
-  BrowserRouter,
-  Link,
-  Route,
-  Switch,
-  useParams
-} from "react-router-dom";
+import { BrowserRouter, Route, Switch } from "react-router-dom";
 
 import { Provider, useSelector } from "react-redux";
 import {
   configureStore,
   getDefaultMiddleware,
-  combineReducers,
-  createSlice
+  combineReducers
 } from "redux-starter-kit";
 
 import io from "socket.io-client";
