@@ -72,7 +72,7 @@ function TestComponent(props) {
       {user ? (
         <Switch>
           <Route path="/game/:id">
-            <Game />
+            <Game user={user} />
           </Route>
           <Route>
             <Lobby />

@@ -74,6 +74,7 @@ const lobbySlice = createSlice({
       state.selected = action.payload;
     },
     onGameCreated(state, action) {
+      if (!state.open) return;
       const currentGame = state.games[action.payload._id];
       if (
         currentGame === undefined ||
@@ -83,6 +84,7 @@ const lobbySlice = createSlice({
       }
     },
     onGameChanged(state, action) {
+      if (!state.open) return;
       const currentGame = state.games[action.payload._id];
       if (
         currentGame === undefined ||
@@ -92,6 +94,7 @@ const lobbySlice = createSlice({
       }
     },
     onGameRemoved(state, action) {
+      if (!state.open) return;
       delete state.games[action.payload._id];
     }
   }

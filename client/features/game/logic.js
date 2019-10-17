@@ -19,6 +19,24 @@ const openLogic = createLogic({
   }
 });
 
-const gameLogics = [openLogic];
+const actLogic = createLogic({
+  type: gameSlice.actions.act,
+  latest: true,
+  processOptions: {
+    dispatchReturn: true,
+    successType: gameSlice.actions.actSuccess,
+    failType: gameSlice.actions.actFailure
+  },
+  process({ getState, action, client }) {
+    const gameState = getState().game;
+    const index = Object.values(gameState.current.steps).length;
+    console.log(gameState);
+    return client
+      .service("steps")
+      .create({ game: gameState.current._id, index, action: action.payload });
+  }
+});
+
+const gameLogics = [openLogic, actLogic];
 
 export default gameLogics;

@@ -8,6 +8,12 @@ const { default: CodexGame } = require("@adam.biltcliffe/codex");
 // eslint-disable-next-line no-unused-vars
 module.exports = (options = {}) => {
   return async context => {
+    if (context.data.game === undefined) {
+      throw new errors.BadRequest("No game id provided.");
+    }
+    if (context.data.action === undefined) {
+      throw new errors.BadRequest("No action provided.");
+    }
     const internalCallParams = {
       ...callingParams()(context),
       provider: undefined
