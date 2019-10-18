@@ -7,6 +7,11 @@ import { useParams } from "react-router-dom";
 import Button from "@material-ui/core/Button";
 
 import { gameActions } from "../features/game/slice";
+import {
+  playerCanAct,
+  getShownIndex,
+  getShownState
+} from "../features/game/selectors";
 
 function ActionButton({ action }) {
   const dispatch = useDispatch();
@@ -26,24 +31,22 @@ function Game(props) {
       dispatch(gameActions.closeGame());
     };
   }, [props.user]);
-  const { current, states } = useSelector(s => s.game);
-  const canSuggestAction =
-    current &&
-    states &&
-    states.length > 0 &&
-    props.user._id == current.activePlayer;
+  const index = useSelector(getShownIndex);
+  const currentState = useSelector(getShownState);
+  const canSuggestAction = useSelector(playerCanAct)(props.user._id);
   return (
     <>
-      <span>Hi {id}</span>
-      <code>{JSON.stringify(states)}</code>
+      <span>
+        Hi {id}, step {index}
+      </span>
+      <code>{JSON.stringify(currentState)}</code>
       <hr />
       <code>
-        {(canSuggestAction
-          ? CodexGame.suggestActions(states[states.length - 1])
-          : []
-        ).map(act => (
-          <ActionButton key={JSON.stringify(act)} action={act} />
-        ))}
+        {(canSuggestAction ? CodexGame.suggestActions(currentState) : []).map(
+          act => (
+            <ActionButton key={JSON.stringify(act)} action={act} />
+          )
+        )}
       </code>
     </>
   );

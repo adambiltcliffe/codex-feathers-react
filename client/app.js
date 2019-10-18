@@ -53,6 +53,10 @@ client.service("games").on("removed", (data, context) => {
   store.dispatch(lobbyActions.onGameRemoved(data));
 });
 
+client.service("steps").on("created", (data, context) => {
+  store.dispatch(gameActions.onStepCreated(data));
+});
+
 function TestComponent(props) {
   const user = useSelector(s => s.auth.user);
   const alert = useSelector(s => s.alert.currentAlert);

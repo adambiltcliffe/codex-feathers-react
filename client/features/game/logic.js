@@ -30,7 +30,6 @@ const actLogic = createLogic({
   process({ getState, action, client }) {
     const gameState = getState().game;
     const index = Object.values(gameState.current.steps).length;
-    console.log(gameState);
     return client
       .service("steps")
       .create({ game: gameState.current._id, index, action: action.payload });
