@@ -93,3 +93,5 @@ ReactDOM.render(
   </Provider>,
   document.getElementById("react-root")
 );
+
+console.log("hopefully ok?");

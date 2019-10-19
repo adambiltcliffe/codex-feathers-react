@@ -10,19 +10,6 @@ import {
   Switch,
   useParams
 } from "react-router-dom";
-import Avatar from "@material-ui/core/Avatar";
-import Button from "@material-ui/core/Button";
-import Card from "@material-ui/core/Card";
-import CardActions from "@material-ui/core/CardActions";
-import CardContent from "@material-ui/core/CardContent";
-import Chip from "@material-ui/core/Chip";
-import Paper from "@material-ui/core/Paper";
-import Table from "@material-ui/core/Table";
-import TableBody from "@material-ui/core/TableBody";
-import TableCell from "@material-ui/core/TableCell";
-import TableHead from "@material-ui/core/TableHead";
-import TableRow from "@material-ui/core/TableRow";
-import Typography from "@material-ui/core/Typography";
 
 import { lobbyActions } from "../features/lobby/slice";
 import {
@@ -82,68 +69,65 @@ function GameDetail({ game }) {
     const label = game.started
       ? `${p.username}${p.user == game.activePlayer ? " (active player)" : ""}`
       : `${p.username} (${p.ready ? "" : "not "}ready)`;
-    return (
-      <Chip
-        key={p._id}
-        avatar={<Avatar>{p.username[0]}</Avatar>}
-        label={label}
-      />
-    );
+    return <span key={p._id}>{label}</span>;
   });
   return (
-    <Card>
-      <CardContent>
-        <Typography color="textSecondary">
+    <div>
+      <div>
+        <span color="textSecondary">
           Updated <TimeAgo date={game.updatedAt} />
-        </Typography>
-        <Typography variant="h5">{makeGameTitle(game)}</Typography>
-        <Typography color="textSecondary">{game.comment}</Typography>
-        <Typography>{statusComment}</Typography>
+        </span>
+        <h5>{makeGameTitle(game)}</h5>
+        <span color="textSecondary">{game.comment}</span>
+        <span>{statusComment}</span>
         {playerChips}
-      </CardContent>
+      </div>
 
-      <CardActions>
-        <Button
+      <div>
+        <button
           onClick={useCallback(() => joinGame(dispatch, game._id), [game._id])}
         >
           Join
-        </Button>
-        <Button
+        </button>
+        <button
           onClick={useCallback(() => leaveGame(dispatch, game._id), [game._id])}
         >
           Leave
-        </Button>
-        <Button
+        </button>
+        <button
           onClick={useCallback(() => setReady(dispatch, game._id, true), [
             game._id
           ])}
         >
           Ready
-        </Button>
-        <Button
+        </button>
+        <button
           onClick={useCallback(() => setReady(dispatch, game._id, false), [
             game._id
           ])}
         >
           Not ready
-        </Button>
-        <Button
+        </button>
+        <button
           onClick={useCallback(() => deleteGame(dispatch, game._id), [
             game._id
           ])}
         >
           Delete
-        </Button>
-        <Button
+        </button>
+        <button
           color="primary"
           component={gameLink}
           to={`/game/${game._id}`}
           target="_blank"
         >
           Open game
-        </Button>
-      </CardActions>
-    </Card>
+        </button>
+        <Link to={`/game/${game._id}`} target="_blank">
+          debug open game
+        </Link>
+      </div>
+    </div>
   );
 }
 
@@ -151,16 +135,16 @@ function GameRow({ game }) {
   const dispatch = useDispatch();
   const title = makeGameTitle(game);
   return (
-    <TableRow
+    <tr
       onClick={useCallback(() => setSelected(dispatch, game._id), [game._id])}
     >
-      <TableCell>{title}</TableCell>
-      <TableCell>{game.comment}</TableCell>
-      <TableCell>
+      <td>{title}</td>
+      <td>{game.comment}</td>
+      <td>
         <TimeAgo date={game.updatedAt} />
-      </TableCell>
-      <TableCell>{game.started ? "Started" : "Not started"}</TableCell>
-    </TableRow>
+      </td>
+      <td>{game.started ? "Started" : "Not started"}</td>
+    </tr>
   );
 }
 
@@ -179,27 +163,27 @@ function Lobby(props) {
     ? Object.values(games).map(g => <GameRow key={g._id} game={g} />)
     : null;
   const createGameButton = (
-    <Button onClick={useCallback(() => createGame(dispatch))}>
+    <button onClick={useCallback(() => createGame(dispatch))}>
       Create Game
-    </Button>
+    </button>
   );
   return (
-    <Paper>
+    <div>
       <GameDetail game={selectedGame} />
       {errors ? JSON.stringify(errors) : null}
-      <Table>
-        <TableHead>
-          <TableRow>
-            <TableCell>Players</TableCell>
-            <TableCell>Comment</TableCell>
-            <TableCell>Game updated</TableCell>
-            <TableCell>Status</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>{gameRows}</TableBody>
-      </Table>
+      <table>
+        <thead>
+          <tr>
+            <th>Players</th>
+            <th>Comment</th>
+            <th>Game updated</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>{gameRows}</tbody>
+      </table>
       {games ? createGameButton : <div>Loading lobby ...</div>}
-    </Paper>
+    </div>
   );
 }
 

@@ -4,10 +4,6 @@ import React, { useCallback, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 
-import Button from "@material-ui/core/Button";
-import Grid from "@material-ui/core/Grid";
-import Paper from "@material-ui/core/Paper";
-
 import { gameActions } from "../features/game/slice";
 import {
   playerCanAct,
@@ -18,13 +14,13 @@ import {
 function ActionButton({ action }) {
   const dispatch = useDispatch();
   return (
-    <Button
+    <button
       size="small"
       variant="outlined"
       onClick={useCallback(() => dispatch(gameActions.act(action)))}
     >
       {JSON.stringify(action)}
-    </Button>
+    </button>
   );
 }
 
@@ -45,9 +41,9 @@ function Game(props) {
       <span>
         Hi {id}, step {index}
       </span>
-      <Grid container spacing={3}>
-        <Grid item xs={12} sm={3}>
-          <Paper>
+      <div container spacing={3}>
+        <div item xs={12} sm={3}>
+          <div>
             <code>
               {(canSuggestAction
                 ? CodexGame.suggestActions(currentState)
@@ -56,19 +52,19 @@ function Game(props) {
                 <ActionButton key={JSON.stringify(act)} action={act} />
               ))}
             </code>
-          </Paper>
-        </Grid>
-        <Grid item xs={12} sm={6}>
-          <Paper>
+          </div>
+        </div>
+        <div item xs={12} sm={6}>
+          <div>
             <code>{JSON.stringify(currentState)}</code>
-          </Paper>
-        </Grid>
-        <Grid item xs={12} sm={3}>
-          <Paper>
+          </div>
+        </div>
+        <div item xs={12} sm={3}>
+          <div>
             right right right right right right right right right right right
-          </Paper>
-        </Grid>
-      </Grid>
+          </div>
+        </div>
+      </div>
     </>
   );
 }
