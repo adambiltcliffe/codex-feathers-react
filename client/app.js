@@ -1,3 +1,6 @@
+import "react-bulma-components/dist/react-bulma-components.min.css";
+import "./css/app.css";
+
 import React, { useEffect } from "react";
 import ReactDOM from "react-dom";
 
@@ -93,5 +96,3 @@ ReactDOM.render(
   </Provider>,
   document.getElementById("react-root")
 );
-
-console.log("hopefully ok?");

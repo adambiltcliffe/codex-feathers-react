@@ -11,20 +11,14 @@ import {
   useParams
 } from "react-router-dom";
 
+import { makeGameTitle } from "../util";
+
 import { lobbyActions } from "../features/lobby/slice";
 import {
   getAllGames,
   getErrors,
   getSelectedGame
 } from "../features/lobby/selectors";
-
-function makeGameTitle(game) {
-  return game.players[0]
-    ? game.players[1]
-      ? `${game.players[0].username} vs. ${game.players[1].username}`
-      : `${game.players[0].username} (awaiting opponent)`
-    : "(empty)";
-}
 
 function setSelected(dispatch, gameId) {
   dispatch(lobbyActions.setSelected(gameId));
