@@ -1,25 +1,27 @@
-.left-scrollable-panel {
-  top: 3.5rem;
-  bottom: 0;
-  left: 0;
-  overflow-x: hidden;
-  overflow-y: auto;
-  position: fixed;
-}
-.centre-scrollable-panel {
-  top: 3.5rem;
-  bottom: 0;
-  left: 25%;
-  right: 25%;
-  overflow-x: hidden;
-  overflow-y: auto;
-  position: fixed;
-}
-.right-scrollable-panel {
-  top: 3.5rem;
-  bottom: 0;
-  right: 0;
-  overflow-x: hidden;
-  overflow-y: scroll;
-  position: fixed;
+@media screen and (min-width: 768px) {
+  .left-scrollable-panel {
+    top: 3.5rem;
+    bottom: 0;
+    left: 0;
+    overflow-x: hidden;
+    overflow-y: auto;
+    position: fixed;
+  }
+  .centre-scrollable-panel {
+    top: 3.5rem;
+    bottom: 0;
+    left: 25%;
+    right: 25%;
+    overflow-x: hidden;
+    overflow-y: auto;
+    position: fixed;
+  }
+  .right-scrollable-panel {
+    top: 3.5rem;
+    bottom: 0;
+    right: 0;
+    overflow-x: hidden;
+    overflow-y: scroll;
+    position: fixed;
+  }
 }

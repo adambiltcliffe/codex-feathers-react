@@ -11,12 +11,14 @@ import {
   getShownIndex,
   getShownState,
   isShowingLatestState,
-  getGame
+  getGame,
+  getMaxIndex
 } from "../features/game/selectors";
 
 import fromPairs from "lodash/fromPairs";
 
-import { Columns, Message } from "react-bulma-components";
+import { Columns, Heading, Message } from "react-bulma-components";
+import PlaybackButtons from "./PlaybackButtons";
 import { makeGameTitle } from "../util";
 
 function ActionButton({ action }) {
@@ -61,7 +63,6 @@ function Game(props) {
       dispatch(gameActions.closeGame());
     };
   }, [props.user]);
-  const index = useSelector(getShownIndex);
   const game = useSelector(getGame);
   const currentState = useSelector(getShownState);
   const currentPlayerCanAct = useSelector(playerCanAct)(props.user._id);
@@ -78,12 +79,13 @@ function Game(props) {
         <div>
           {game ? (
             <>
-              <div>{makeGameTitle(game)}</div>
-              <div>{game.comment}</div>
+              <Heading>{makeGameTitle(game)}</Heading>
+              <Heading subtitle>{game.comment}</Heading>
             </>
           ) : (
             <div>Loading ...</div>
           )}
+          <PlaybackButtons />
           {canSuggestAction
             ? CodexGame.suggestActions(currentState).map(act => (
                 <ActionButton key={JSON.stringify(act)} action={act} />
