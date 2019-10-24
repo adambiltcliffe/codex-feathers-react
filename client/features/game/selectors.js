@@ -1,5 +1,7 @@
 export const canAct = s =>
-  s.game.current && s.game.states && s.game.states.length > 0;
+  s.game.current &&
+  s.game.states &&
+  s.game.states.length == s.game.current.nextStep;
 export const playerCanAct = s => userId =>
   canAct(s) && userId == s.game.current.activePlayer;
 

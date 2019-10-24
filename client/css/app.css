@@ -10,8 +10,8 @@
   .centre-scrollable-panel {
     top: 3.5rem;
     bottom: 0;
-    left: 25%;
-    right: 25%;
+    left: 20%;
+    right: 20%;
     overflow-x: hidden;
     overflow-y: auto;
     position: fixed;
@@ -24,4 +24,8 @@
     overflow-y: scroll;
     position: fixed;
   }
+}
+
+.card-text {
+  background-color: #f6fbfe;
 }

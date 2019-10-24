@@ -3,13 +3,7 @@ import ReactDOM from "react-dom";
 import { useDispatch, useSelector } from "react-redux";
 import TimeAgo from "react-timeago";
 
-import {
-  BrowserRouter,
-  Link,
-  Route,
-  Switch,
-  useParams
-} from "react-router-dom";
+import { Link } from "react-router-dom";
 
 import { makeGameTitle } from "../util";
 
@@ -19,6 +13,8 @@ import {
   getErrors,
   getSelectedGame
 } from "../features/lobby/selectors";
+
+import { Card, Heading, Table } from "react-bulma-components";
 
 function setSelected(dispatch, gameId) {
   dispatch(lobbyActions.setSelected(gameId));
@@ -66,70 +62,78 @@ function GameDetail({ game }) {
     return <span key={p._id}>{label}</span>;
   });
   return (
-    <div>
-      <div>
+    <Card>
+      <Card.Content>
         <span color="textSecondary">
           Updated <TimeAgo date={game.updatedAt} />
         </span>
-        <h5>{makeGameTitle(game)}</h5>
-        <span color="textSecondary">{game.comment}</span>
+        <Heading>{makeGameTitle(game)}</Heading>
+        <Heading subtitle>{game.comment}</Heading>
         <span>{statusComment}</span>
         {playerChips}
-      </div>
+      </Card.Content>
 
-      <div>
-        <button
+      <Card.Footer>
+        <Card.Footer.Item
+          renderAs="a"
           onClick={useCallback(() => joinGame(dispatch, game._id), [game._id])}
         >
           Join
-        </button>
-        <button
+        </Card.Footer.Item>
+        <Card.Footer.Item
+          renderAs="a"
           onClick={useCallback(() => leaveGame(dispatch, game._id), [game._id])}
         >
           Leave
-        </button>
-        <button
+        </Card.Footer.Item>
+        <Card.Footer.Item
+          renderAs="a"
           onClick={useCallback(() => setReady(dispatch, game._id, true), [
             game._id
           ])}
         >
           Ready
-        </button>
-        <button
+        </Card.Footer.Item>
+        <Card.Footer.Item
+          renderAs="a"
           onClick={useCallback(() => setReady(dispatch, game._id, false), [
             game._id
           ])}
         >
           Not ready
-        </button>
-        <button
+        </Card.Footer.Item>
+        <Card.Footer.Item
+          renderAs="a"
           onClick={useCallback(() => deleteGame(dispatch, game._id), [
             game._id
           ])}
         >
           Delete
-        </button>
-        <button
+        </Card.Footer.Item>
+        <Card.Footer.Item
+          renderAs="a"
           color="primary"
           component={gameLink}
           to={`/game/${game._id}`}
           target="_blank"
         >
           Open game
-        </button>
+        </Card.Footer.Item>
         <Link to={`/game/${game._id}`} target="_blank">
           debug open game
         </Link>
-      </div>
-    </div>
+      </Card.Footer>
+    </Card>
   );
 }
 
-function GameRow({ game }) {
+function GameRow({ game, selected }) {
   const dispatch = useDispatch();
   const title = makeGameTitle(game);
+  const cn = selected ? "is-selected" : "";
   return (
     <tr
+      className={cn}
       onClick={useCallback(() => setSelected(dispatch, game._id), [game._id])}
     >
       <td>{title}</td>
@@ -154,7 +158,13 @@ function Lobby(props) {
   const errors = useSelector(getErrors);
   const selectedGame = useSelector(getSelectedGame);
   const gameRows = games
-    ? Object.values(games).map(g => <GameRow key={g._id} game={g} />)
+    ? Object.values(games).map(g => (
+        <GameRow
+          key={g._id}
+          game={g}
+          selected={selectedGame && g._id == selectedGame._id}
+        />
+      ))
     : null;
   const createGameButton = (
     <button onClick={useCallback(() => createGame(dispatch))}>
@@ -165,7 +175,7 @@ function Lobby(props) {
     <div>
       <GameDetail game={selectedGame} />
       {errors ? JSON.stringify(errors) : null}
-      <table>
+      <Table>
         <thead>
           <tr>
             <th>Players</th>
@@ -175,7 +185,7 @@ function Lobby(props) {
           </tr>
         </thead>
         <tbody>{gameRows}</tbody>
-      </table>
+      </Table>
       {games ? createGameButton : <div>Loading lobby ...</div>}
     </div>
   );

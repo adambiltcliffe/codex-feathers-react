@@ -26,6 +26,8 @@ import alertSlice, { alertActions } from "./features/alert/slice";
 import lobbySlice, { lobbyActions } from "./features/lobby/slice";
 import gameSlice, { gameActions } from "./features/game/slice";
 
+import ErrorBoundary from "./ui/ErrorBoundary";
+
 import Auth from "./ui/Auth";
 import Game from "./ui/Game";
 import Lobby from "./ui/Lobby";
@@ -67,26 +69,34 @@ function TestComponent(props) {
     store.dispatch(authActions.reauthenticate());
   }, []);
   return (
-    <BrowserRouter>
-      <Auth />
-      {alert ? (
-        <div>
-          <strong>
-            {alert.timestamp}: {alert.message}
-          </strong>
-        </div>
-      ) : null}
-      {user ? (
-        <Switch>
-          <Route path="/game/:id">
-            <Game user={user} />
-          </Route>
-          <Route>
-            <Lobby />
-          </Route>
-        </Switch>
-      ) : null}
-    </BrowserRouter>
+    <ErrorBoundary>
+      <BrowserRouter>
+        <ErrorBoundary>
+          <Auth />
+        </ErrorBoundary>
+        {alert ? (
+          <div>
+            <strong>
+              {alert.timestamp}: {alert.message}
+            </strong>
+          </div>
+        ) : null}
+        {user ? (
+          <Switch>
+            <Route path="/game/:id">
+              <ErrorBoundary>
+                <Game user={user} />
+              </ErrorBoundary>
+            </Route>
+            <Route>
+              <ErrorBoundary>
+                <Lobby />
+              </ErrorBoundary>
+            </Route>
+          </Switch>
+        ) : null}
+      </BrowserRouter>
+    </ErrorBoundary>
   );
 }
 
