@@ -37,13 +37,8 @@ function DebugActionInput(props) {
     if (!allowSubmit) {
       return;
     }
-    try {
-      const actionObject = JSON.parse(newAction);
-      dispatch(gameActions.act(actionObject));
-      setError(null);
-    } catch (e) {
-      setError(e);
-    }
+    const actionObject = JSON.parse(newAction);
+    dispatch(gameActions.act(actionObject));
   });
   const actionList = CodexGame.suggestActions(state).map(a => {
     const s = JSON.stringify(a);

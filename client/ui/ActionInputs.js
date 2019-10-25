@@ -9,6 +9,7 @@ import { Box, Panel } from "react-bulma-components";
 
 import ChoicePrompt from "./prompts/ChoicePrompt";
 import DebugActionInput from "./DebugActionInput";
+import PlayPrompt from "./prompts/PlayPrompt";
 
 // eventually this should be replaced with a helper in CodexGame.interface
 function requiredActionType(state) {
@@ -36,7 +37,7 @@ function ActionInputs(props) {
       <Panel.Block>Make a worker</Panel.Block>
       <Panel.Block>Attack something</Panel.Block>
       <Panel.Block>Activate an ability</Panel.Block>
-      <Panel.Block>Play a card from hand</Panel.Block>
+      <PlayPrompt state={state} />
       <Panel.Block>Summon a hero</Panel.Block>
       <Panel.Block>Level up a hero</Panel.Block>
       <Panel.Block>Construct a building</Panel.Block>

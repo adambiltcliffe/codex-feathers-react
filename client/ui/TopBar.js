@@ -20,7 +20,7 @@ function TopBar(props) {
         <Auth />
       </Navbar.Brand>
       <Navbar.Menu>
-        <label class="checkbox">
+        <label className="checkbox">
           <input
             type="checkbox"
             defaultChecked={debug}

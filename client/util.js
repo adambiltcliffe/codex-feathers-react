@@ -1,3 +1,5 @@
+import CodexGame from "@adam.biltcliffe/codex";
+
 export function makeGameTitle(game) {
   return game.players[0]
     ? game.players[1]
@@ -13,5 +15,6 @@ export function makeTurnAndPhaseDescription(state, nameMap) {
   const { turn, phase, activePlayerIndex, playerList } = state;
   const activePlayerName = nameMap[playerList[activePlayerIndex]];
   const displayedTurn = Math.floor(turn / playerList.length) + 1;
-  return `Turn ${displayedTurn} (${activePlayerName}) - phase ${phase}`;
+  const phaseName = CodexGame.interface.describePhase(phase);
+  return `Turn ${displayedTurn} (${activePlayerName}) - ${phaseName}`;
 }

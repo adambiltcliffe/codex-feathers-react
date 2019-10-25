@@ -116,7 +116,9 @@ function ConstructingBuildingCard(props) {
     <Panel>
       <Panel.Block>
         <div>
-          <div>{upperFirst(props.building)}</div>
+          <div>
+            {upperFirst(CodexGame.interface.describeFixture(props.building))}
+          </div>
           <div className="content is-small">Building</div>
         </div>
       </Panel.Block>

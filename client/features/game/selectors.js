@@ -17,3 +17,5 @@ export const isShowingLatestState = s =>
 export const canRewind = s => s.game.shownIndex > 0;
 export const canAdvance = s =>
   s.game.states && s.game.shownIndex < s.game.states.length - 1;
+
+export const actionIsPending = s => s.game.pendingAction;

@@ -39,7 +39,7 @@ function PatrolZoneArea(props) {
     <Columns>
       {[0, 1, 2, 3, 4].map(index => (
         <Columns.Column size="one-fifth" key={index}>
-          <Level>Slot {index}</Level>
+          <Level>{CodexGame.interface.describePatrolSlot(index)}</Level>
           {patrollerWhere[index] ? (
             <EntityCard entity={patrollerWhere[index][0]} />
           ) : null}
