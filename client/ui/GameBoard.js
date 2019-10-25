@@ -9,12 +9,10 @@ import {
 import EntityCard from "./EntityCard";
 
 import chunk from "lodash/chunk";
+import groupBy from "lodash/groupBy";
 
-export default function GameBoard(props) {
-  const { state } = props;
-  const entities = Object.values(state.entities).concat(
-    state.constructing.map(c => ({ constructing: c, id: c }))
-  );
+function PlayerGameBoardArea(props) {
+  const { entities } = props;
   const rows = chunk(entities, 5);
   return (
     <>
@@ -26,6 +24,29 @@ export default function GameBoard(props) {
             </Columns.Column>
           ))}
         </Columns>
+      ))}
+    </>
+  );
+}
+
+function PlayerGameBoard(props) {
+  return <PlayerGameBoardArea entities={props.entities} />;
+}
+
+export default function GameBoard(props) {
+  const { state } = props;
+  const entities = Object.values(state.entities).concat(
+    state.constructing.map(c => ({
+      constructing: c,
+      id: c,
+      current: { controller: state.playerList[state.activePlayerIndex] }
+    }))
+  );
+  const playerBoards = groupBy(entities, "current.controller");
+  return (
+    <>
+      {Object.entries(playerBoards).map(([p, e]) => (
+        <PlayerGameBoard key={p} entities={e} />
       ))}
     </>
   );
