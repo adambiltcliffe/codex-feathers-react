@@ -127,7 +127,9 @@ function Game(props) {
       </Columns.Column>
       <Columns.Column className="centre-scrollable-panel">
         <ErrorBoundary>
-          {currentState ? <GameBoard state={currentState} /> : null}
+          {currentState ? (
+            <GameBoard state={currentState} usernames={usernameMap} />
+          ) : null}
         </ErrorBoundary>
       </Columns.Column>
       <Columns.Column

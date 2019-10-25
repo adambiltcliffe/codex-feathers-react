@@ -25,7 +25,9 @@
     position: fixed;
   }
 }
-
 .card-text {
   background-color: #f6fbfe;
+}
+.no-margin {
+  margin: 0 !important;
 }

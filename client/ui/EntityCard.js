@@ -1,3 +1,5 @@
+import CodexGame from "@adam.biltcliffe/codex";
+
 import React from "react";
 
 import { Content, Panel } from "react-bulma-components";
@@ -15,16 +17,6 @@ function displaySpec(s) {
 
 function displayColor(c) {
   return upperFirst(lowerCase(c));
-}
-
-function displayAbility(a) {
-  return a.keyword || a.path;
-}
-
-function displayAbilities(entity) {
-  return (entity.current.abilities || [])
-    .map(a => displayAbility(a))
-    .join(", ");
 }
 
 function displayOwner(entity) {
@@ -66,7 +58,9 @@ export default function EntityCard(props) {
         <div>
           {upperFirst(entity.current.name)}, {entity.current.title}
         </div>
-        <div className="content is-small">{subtitle}</div>
+        <div className="content is-small">
+          {subtitle}, level {entity.level}
+        </div>
       </>
     ) : (
       <>
@@ -78,9 +72,16 @@ export default function EntityCard(props) {
   const body = (
     <>
       {showOwner ? (
-        <div className="content is-small">{`${displayOwner(entity)}`}</div>
+        <div className="content is-small card-text no-margin">{`${displayOwner(
+          entity
+        )}`}</div>
       ) : null}
-      <div className="content is-small">{`${displayAbilities(entity)}`}</div>
+      {CodexGame.interface.makeAbilityText(entity).map((s, index) => (
+        <div
+          key={`${index}${s}`}
+          className="content is-small card-text no-margin"
+        >{`${s}`}</div>
+      ))}
     </>
   );
   const footerExtra =
