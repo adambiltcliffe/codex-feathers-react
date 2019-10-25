@@ -25,24 +25,12 @@ import {
   Heading,
   Message
 } from "react-bulma-components";
+import ActionInputs from "./ActionInputs";
 import GameBoard from "./GameBoard";
 import PlaybackButtons from "./PlaybackButtons";
 import Queue from "./Queue";
 
 import { makeGameTitle, makeTurnAndPhaseDescription } from "../util";
-
-function ActionButton({ action }) {
-  const dispatch = useDispatch();
-  return (
-    <button
-      size="small"
-      variant="outlined"
-      onClick={useCallback(() => dispatch(gameActions.act(action)))}
-    >
-      {(JSON.stringify(action) || "").split(",").join(", ")}
-    </button>
-  );
-}
 
 const LogEntry = React.forwardRef((props, ref) => {
   const { state, index, map } = props;
@@ -117,11 +105,7 @@ function Game(props) {
             )}
             <PlaybackButtons />
             <Queue state={currentState} />
-            {canSuggestAction
-              ? CodexGame.suggestActions(currentState).map(act => (
-                  <ActionButton key={JSON.stringify(act)} action={act} />
-                ))
-              : null}
+            {canSuggestAction ? <ActionInputs state={currentState} /> : null}
           </div>
         </ErrorBoundary>
       </Columns.Column>

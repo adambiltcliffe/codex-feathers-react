@@ -23,12 +23,13 @@ import logics from "./logics";
 
 import authSlice, { authActions } from "./features/auth/slice";
 import alertSlice, { alertActions } from "./features/alert/slice";
+import debugSlice, { debugActions } from "./features/debug/slice";
 import lobbySlice, { lobbyActions } from "./features/lobby/slice";
 import gameSlice, { gameActions } from "./features/game/slice";
 
 import ErrorBoundary from "./ui/ErrorBoundary";
 
-import Auth from "./ui/Auth";
+import TopBar from "./ui/TopBar";
 import Game from "./ui/Game";
 import Lobby from "./ui/Lobby";
 
@@ -39,6 +40,7 @@ client.configure(auth());
 const rootReducer = combineReducers({
   alert: alertSlice.reducer,
   auth: authSlice.reducer,
+  debug: debugSlice.reducer,
   lobby: lobbySlice.reducer,
   game: gameSlice.reducer
 });
@@ -72,7 +74,7 @@ function TestComponent(props) {
     <ErrorBoundary>
       <BrowserRouter>
         <ErrorBoundary>
-          <Auth />
+          <TopBar />
         </ErrorBoundary>
         {alert ? (
           <div>

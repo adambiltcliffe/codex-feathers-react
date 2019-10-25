@@ -10,7 +10,7 @@ function Auth(props) {
   const dispatch = useDispatch();
   const user = useSelector(getUser);
   return (
-    <Navbar>
+    <>
       <button onClick={() => dispatch(authActions.authenticate("alf"))}>
         Log in (alf)
       </button>
@@ -19,7 +19,7 @@ function Auth(props) {
       </button>
       <button onClick={() => dispatch(authActions.logout())}>Log out</button>
       <span>{user ? `Logged in as ${user.username}` : "Not logged in"}</span>
-    </Navbar>
+    </>
   );
 }
 
