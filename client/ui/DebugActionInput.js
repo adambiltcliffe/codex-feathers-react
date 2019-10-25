@@ -20,7 +20,7 @@ function DebugActionInput(props) {
         try {
           CodexGame.checkAction(state, actionObject);
           setAllowSubmit(true);
-          setValidation("Ok!");
+          setValidation("Action is legal.");
         } catch (e) {
           setAllowSubmit(false);
           setValidation("Not a legal action --- " + e);

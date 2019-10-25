@@ -5,19 +5,20 @@ import { useDispatch, useSelector } from "react-redux";
 
 import { gameActions } from "../features/game/slice";
 
+import { Box, Panel } from "react-bulma-components";
+
+import ChoicePrompt from "./prompts/ChoicePrompt";
 import DebugActionInput from "./DebugActionInput";
 
-function ActionButton({ action }) {
-  const dispatch = useDispatch();
-  return (
-    <button
-      size="small"
-      variant="outlined"
-      onClick={useCallback(() => dispatch(gameActions.act(action)))}
-    >
-      {(JSON.stringify(action) || "").split(",").join(", ")}
-    </button>
-  );
+// eventually this should be replaced with a helper in CodexGame.interface
+function requiredActionType(state) {
+  if (state.newTriggers && state.newTriggers.length > 0) {
+    return "queue";
+  }
+  if (state.currentTrigger) {
+    return "choice";
+  }
+  return null;
 }
 
 function ActionInputs(props) {
@@ -25,10 +26,23 @@ function ActionInputs(props) {
   const debug = useSelector(s => s.debug);
   if (debug) {
     return <DebugActionInput state={state} />;
-  } else
-    return CodexGame.suggestActions(state).map(act => (
-      <ActionButton key={JSON.stringify(act)} action={act} />
-    ));
+  }
+  const rat = requiredActionType(state);
+  if (rat) {
+    return <ChoicePrompt state={state} />;
+  }
+  return (
+    <Panel>
+      <Panel.Block>Make a worker</Panel.Block>
+      <Panel.Block>Attack something</Panel.Block>
+      <Panel.Block>Activate an ability</Panel.Block>
+      <Panel.Block>Play a card from hand</Panel.Block>
+      <Panel.Block>Summon a hero</Panel.Block>
+      <Panel.Block>Level up a hero</Panel.Block>
+      <Panel.Block>Construct a building</Panel.Block>
+      <Panel.Block>End your turn</Panel.Block>
+    </Panel>
+  );
 }
 
 export default ActionInputs;
