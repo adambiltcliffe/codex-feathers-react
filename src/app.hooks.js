@@ -1,10 +1,23 @@
 const errors = require("@feathersjs/errors");
+const {
+  disallow,
+  discardQuery,
+  iff,
+  isProvider,
+  keep,
+  required,
+  setNow
+} = require("feathers-hooks-common");
 
 // Application hooks that run for every service
 
 module.exports = {
   before: {
-    all: [],
+    all: [
+      iff(isProvider("external"), ctx => {
+        ctx.params.startTime = Date.now();
+      })
+    ],
     find: [],
     get: [],
     create: [],
@@ -14,7 +27,12 @@ module.exports = {
   },
 
   after: {
-    all: [],
+    all: [
+      iff(isProvider("external"), ctx => {
+        const elapsed = Date.now() - ctx.params.startTime;
+        ctx.app.info(`External service call completed in ${elapsed}ms`);
+      })
+    ],
     find: [],
     get: [],
     create: [],

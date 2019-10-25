@@ -1,7 +1,13 @@
 import CodexGame from "@adam.biltcliffe/codex";
 import fillTemplate from "es6-dynamic-template";
 
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState
+} from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 
@@ -36,9 +42,11 @@ const LogEntry = React.forwardRef((props, ref) => {
   const { state, index, map } = props;
   const dispatch = useDispatch();
   const shownIndex = useSelector(getShownIndex);
-  const lines = state.log.map((msg, index) => (
-    <div key={index}>{fillTemplate(msg, map)}</div>
-  ));
+  const lines = useMemo(() =>
+    state.log.map((msg, index) => (
+      <div key={index}>{fillTemplate(msg, map)}</div>
+    ))
+  );
   const color = index == shownIndex ? "primary" : "dark";
   return (
     <Message
@@ -71,10 +79,11 @@ function Game(props) {
   const showingLatest = useSelector(isShowingLatestState);
   const history = useSelector(s => s.game.states || []);
   const canSuggestAction = currentPlayerCanAct && showingLatest;
-  const usernameMap =
+  const usernameMap = useMemo(() =>
     game && game.players
       ? fromPairs(Object.values(game.players).map(p => [p.user, p.username]))
-      : {};
+      : {}
+  );
   const bottomElement = useRef();
   const [scrolledUp, setScrolledUp] = useState(false);
   const onScroll = useCallback(e => {
