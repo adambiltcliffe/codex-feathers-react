@@ -17,9 +17,10 @@ import {
   getShownIndex,
   getShownState,
   isShowingLatestState,
-  getGame,
-  getMaxIndex,
-  getUsernameMap
+  isGameLoaded,
+  getUsernameMap,
+  getPlayerList,
+  getComment
 } from "../features/game/selectors";
 
 import fromPairs from "lodash/fromPairs";
@@ -37,7 +38,12 @@ import GameBoard from "./GameBoard";
 import PlaybackButtons from "./PlaybackButtons";
 import Queue from "./Queue";
 
-import { makeGameTitle, makeTurnAndPhaseDescription } from "../util";
+import { makeTurnAndPhaseDescription } from "../util";
+import { useWhyDidYouUpdate } from "../why-did-you-update";
+
+function makeGameTitleForCurrentGame(playerList, usernameMap) {
+  return `${usernameMap[playerList[0]]} vs. ${usernameMap[playerList[1]]}`;
+}
 
 const LogEntry = React.memo(
   React.forwardRef((props, ref) => {
@@ -86,7 +92,7 @@ const LogColumn = React.memo(
   )
 );
 
-function Game(props) {
+const Game = React.memo(props => {
   const { id } = useParams();
   const dispatch = useDispatch();
   useEffect(() => {
@@ -95,35 +101,54 @@ function Game(props) {
       dispatch(gameActions.closeGame());
     };
   }, [props.user]);
-  const game = useSelector(getGame);
   const currentState = useSelector(getShownState);
   const currentPlayerCanAct = useSelector(playerCanAct)(props.user._id);
-  const shownIndex = useSelector(getShownIndex);
   const showingLatest = useSelector(isShowingLatestState);
-  const history = useSelector(s => s.game.states || []);
   const canSuggestAction = currentPlayerCanAct && showingLatest;
-  const usernameMap = useSelector(getUsernameMap);
   const bottomElement = useRef();
   const [scrolledUp, setScrolledUp] = useState(false);
-  const onScroll = useCallback(e => {
-    setScrolledUp(
-      e.target.scrollHeight - e.target.scrollTop !== e.target.clientHeight
-    );
-  });
+  const onScroll = useCallback(
+    e => {
+      setScrolledUp(
+        e.target.scrollHeight - e.target.scrollTop !== e.target.clientHeight
+      );
+    },
+    [setScrolledUp]
+  );
   useEffect(() => {
     if (!scrolledUp && bottomElement.current) {
       bottomElement.current.scrollIntoView();
     }
-  });
+  }, [currentState]);
+  return (
+    <GameView
+      canAct={canSuggestAction}
+      onScroll={onScroll}
+      bottomElement={bottomElement}
+    />
+  );
+});
+
+const GameView = React.memo(props => {
+  const { canAct, onScroll, bottomElement } = props;
+  const loaded = useSelector(isGameLoaded);
+  const comment = useSelector(getComment);
+  const currentState = useSelector(getShownState);
+  const shownIndex = useSelector(getShownIndex);
+  const history = useSelector(s => s.game.states || []);
+  const playerList = useSelector(getPlayerList);
+  const usernameMap = useSelector(getUsernameMap);
   return (
     <Columns className="is-fullheight main">
       <Columns.Column size="one-fifth" className="left-scrollable-panel">
         <ErrorBoundary>
           <div>
-            {game ? (
+            {loaded ? (
               <>
-                <Heading>{makeGameTitle(game)}</Heading>
-                <Heading subtitle>{game.comment}</Heading>
+                <Heading>
+                  {makeGameTitleForCurrentGame(playerList, usernameMap)}
+                </Heading>
+                <Heading subtitle>{comment}</Heading>
                 <Content>
                   {makeTurnAndPhaseDescription(currentState, usernameMap)}
                 </Content>
@@ -133,7 +158,7 @@ function Game(props) {
             )}
             <PlaybackButtons />
             <Queue state={currentState} />
-            {canSuggestAction ? <ActionInputs state={currentState} /> : null}
+            {canAct ? <ActionInputs state={currentState} /> : null}
           </div>
         </ErrorBoundary>
       </Columns.Column>
@@ -153,6 +178,6 @@ function Game(props) {
       />
     </Columns>
   );
-}
+});
 
 export default Game;

@@ -13,6 +13,7 @@ import chunk from "lodash/chunk";
 import groupBy from "lodash/groupBy";
 import partition from "lodash/partition";
 import sortBy from "lodash/sortBy";
+import { useWhyDidYouUpdate } from "../why-did-you-update";
 
 const PlayerGameBoardRow = React.memo(props => {
   const { entities } = props;
@@ -110,19 +111,26 @@ function PlayerGameBoard(props) {
   }
 }
 
-export default function GameBoard(props) {
+const GameBoard = React.memo(props => {
   const { state, usernames } = props;
   const user = useSelector(getUser);
-  const entities = Object.values(state.entities).concat(
-    state.constructing.map(c => ({
-      constructing: c,
-      id: c,
-      current: { controller: state.playerList[state.activePlayerIndex] }
-    }))
+  const entities = useMemo(
+    () =>
+      Object.values(state.entities).concat(
+        state.constructing.map(c => ({
+          constructing: c,
+          id: c,
+          current: { controller: state.playerList[state.activePlayerIndex] }
+        }))
+      ),
+    [state]
   );
-  const playerBoards = groupBy(entities, "current.controller");
-  const orderedPlayers = sortBy(state.playerList, id =>
-    id == user._id ? 1 : 0
+  const playerBoards = useMemo(() => groupBy(entities, "current.controller"), [
+    entities
+  ]);
+  const orderedPlayers = useMemo(
+    () => sortBy(state.playerList, id => (id == user._id ? 1 : 0)),
+    [state, user]
   );
   return (
     <>
@@ -139,4 +147,6 @@ export default function GameBoard(props) {
       ))}
     </>
   );
-}
+});
+
+export default GameBoard;

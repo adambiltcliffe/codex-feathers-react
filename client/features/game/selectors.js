@@ -10,7 +10,8 @@ export const canAct = s =>
 export const playerCanAct = s => userId =>
   canAct(s) && userId == s.game.current.activePlayer;
 
-export const getGame = s => s.game.current;
+export const isGameLoaded = s => (s.game.current ? true : false);
+export const getComment = s => (s.game.current || {}).comment;
 export const getMaxIndex = s =>
   Math.max(s.game && s.game.states ? s.game.states.length - 1 : 1, 1);
 export const getShownIndex = s => s.game.shownIndex || 0;
@@ -26,7 +27,10 @@ export const canAdvance = s =>
   s.game.states && s.game.shownIndex < s.game.states.length - 1;
 
 export const actionIsPending = s => s.game.pendingAction;
-
+export const getPlayerList = createSelector(
+  getShownState,
+  state => (state ? state.playerList : [])
+);
 export const getUsernameMap = createDeepEqualSelector(
   s =>
     Object.values((s.game.current || {}).players || {}).map(p => [

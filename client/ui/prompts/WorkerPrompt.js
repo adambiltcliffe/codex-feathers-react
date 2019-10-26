@@ -7,6 +7,9 @@ import { Container, Panel } from "react-bulma-components";
 
 import CodexGame from "@adam.biltcliffe/codex";
 
+import range from "lodash/range";
+import uniqBy from "lodash/uniqBy";
+
 function getCardName(card) {
   return CodexGame.interface.getCardInfo(card).name;
 }
@@ -30,6 +33,9 @@ function WorkerPrompt(props) {
     },
     [currentIndex]
   );
+  const fullHand =
+    state.players[state.playerList[state.activePlayerIndex]].hand;
+  const handIndices = uniqBy(range(fullHand.length), index => fullHand[index]);
   return (
     <>
       <Panel.Block>
@@ -37,11 +43,9 @@ function WorkerPrompt(props) {
           Make a worker:
           <div className="select">
             <select defaultValue={currentIndex} onChange={handleChange}>
-              {state.players[
-                state.playerList[state.activePlayerIndex]
-              ].hand.map((c, index) => (
-                <option key={c} value={index}>
-                  {getCardName(c)}
+              {handIndices.map(index => (
+                <option key={fullHand[index]} value={index}>
+                  {getCardName(fullHand[index])}
                 </option>
               ))}
             </select>
