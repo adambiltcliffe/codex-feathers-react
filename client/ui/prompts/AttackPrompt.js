@@ -9,7 +9,7 @@ import CodexGame from "@adam.biltcliffe/codex";
 
 import upperFirst from "lodash/upperFirst";
 
-function AttackPrompt(props) {
+const AttackPrompt = React.memo(props => {
   const { state } = props;
   const dispatch = useDispatch();
   const pending = useSelector(actionIsPending);
@@ -21,7 +21,7 @@ function AttackPrompt(props) {
     return null;
   }
   const [currentAttacker, setCurrentAttacker] = useState(attackers[0]);
-  const [currentTarget, setCurrentTarget] = useState(tree[attackers[0]]);
+  const [currentTarget, setCurrentTarget] = useState(tree[attackers[0]][0]);
   useEffect(() => {
     if (!tree[currentAttacker].includes(currentTarget)) {
       setCurrentTarget(tree[currentAttacker][0]);
@@ -58,7 +58,7 @@ function AttackPrompt(props) {
             >
               {attackers.map(id => (
                 <option key={id} value={id}>
-                  {state.entities[id].current.name}
+                  {upperFirst(state.entities[id].current.name)}
                 </option>
               ))}
             </select>
@@ -68,7 +68,7 @@ function AttackPrompt(props) {
             <select defaultValue={currentTarget} onChange={handleChangeTarget}>
               {tree[currentAttacker].map(id => (
                 <option key={id} value={id}>
-                  {state.entities[id].current.name}
+                  {upperFirst(state.entities[id].current.name)}
                 </option>
               ))}
             </select>
@@ -83,6 +83,6 @@ function AttackPrompt(props) {
       </Panel.Block>
     </>
   );
-}
+});
 
 export default AttackPrompt;
