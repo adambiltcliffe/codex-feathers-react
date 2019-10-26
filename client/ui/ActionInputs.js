@@ -9,6 +9,7 @@ import { Box, Panel } from "react-bulma-components";
 
 import ChoicePrompt from "./prompts/ChoicePrompt";
 import DebugActionInput from "./DebugActionInput";
+import AttackPrompt from "./prompts/AttackPrompt";
 import BuildPrompt from "./prompts/BuildPrompt";
 import PlayPrompt from "./prompts/PlayPrompt";
 import SummonPrompt from "./prompts/SummonPrompt";
@@ -38,7 +39,7 @@ const ActionInputs = React.memo(props => {
   return (
     <Panel>
       <WorkerPrompt state={state} />
-      <Panel.Block>Attack something</Panel.Block>
+      <AttackPrompt state={state} />
       <Panel.Block>Activate an ability</Panel.Block>
       <PlayPrompt state={state} />
       <SummonPrompt state={state} />
