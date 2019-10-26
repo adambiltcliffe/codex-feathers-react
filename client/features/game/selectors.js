@@ -1,3 +1,7 @@
+import fromPairs from "lodash/fromPairs";
+
+import { createDeepEqualSelector } from "../../deep-equal-selector";
+
 export const canAct = s =>
   s.game.current &&
   s.game.states &&
@@ -19,3 +23,12 @@ export const canAdvance = s =>
   s.game.states && s.game.shownIndex < s.game.states.length - 1;
 
 export const actionIsPending = s => s.game.pendingAction;
+
+export const getUsernameMap = createDeepEqualSelector(
+  s =>
+    Object.values((s.game.current || {}).players || {}).map(p => [
+      p.user,
+      p.username
+    ]),
+  fromPairs
+);

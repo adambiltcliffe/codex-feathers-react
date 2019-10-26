@@ -23,8 +23,8 @@ function displayOwner(entity) {
   return `(Owned by ${entity.owner})`;
 }
 
-export default function EntityCard(props) {
-  const { entity, constructing } = props;
+const EntityCard = React.memo(props => {
+  const { entity } = props;
   if (!entity) {
     return null;
   }
@@ -109,7 +109,7 @@ export default function EntityCard(props) {
       ) : null}
     </Panel>
   );
-}
+});
 
 function ConstructingBuildingCard(props) {
   return (
@@ -129,3 +129,5 @@ function ConstructingBuildingCard(props) {
     </Panel>
   );
 }
+
+export default EntityCard;

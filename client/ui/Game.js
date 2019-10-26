@@ -18,7 +18,8 @@ import {
   getShownState,
   isShowingLatestState,
   getGame,
-  getMaxIndex
+  getMaxIndex,
+  getUsernameMap
 } from "../features/game/selectors";
 
 import fromPairs from "lodash/fromPairs";
@@ -38,31 +39,29 @@ import Queue from "./Queue";
 
 import { makeGameTitle, makeTurnAndPhaseDescription } from "../util";
 
-const LogEntry = React.forwardRef((props, ref) => {
-  const { state, index, map } = props;
-  const dispatch = useDispatch();
-  const shownIndex = useSelector(getShownIndex);
-  const lines = useMemo(() =>
-    state.log.map((msg, index) => (
-      <div key={index}>{fillTemplate(msg, map)}</div>
-    ))
-  );
-  const color = index == shownIndex ? "primary" : "dark";
-  return (
-    <Message
-      color={color}
-      onClick={useCallback(() => dispatch(gameActions.setShownState(index)), [
-        index
-      ])}
-    >
-      <Message.Body>
-        <Content size="small">
-          <span ref={ref}>{lines}</span>
-        </Content>
-      </Message.Body>
-    </Message>
-  );
-});
+const LogEntry = React.memo(
+  React.forwardRef((props, ref) => {
+    const { log, index, map, color } = props;
+    const dispatch = useDispatch();
+    const lines = useMemo(() =>
+      log.map((msg, index) => <div key={index}>{fillTemplate(msg, map)}</div>)
+    );
+    return (
+      <Message
+        color={color}
+        onClick={useCallback(() => dispatch(gameActions.setShownState(index)), [
+          index
+        ])}
+      >
+        <Message.Body>
+          <Content size="small">
+            <span ref={ref}>{lines}</span>
+          </Content>
+        </Message.Body>
+      </Message>
+    );
+  })
+);
 
 function Game(props) {
   const { id } = useParams();
@@ -76,14 +75,11 @@ function Game(props) {
   const game = useSelector(getGame);
   const currentState = useSelector(getShownState);
   const currentPlayerCanAct = useSelector(playerCanAct)(props.user._id);
+  const shownIndex = useSelector(getShownIndex);
   const showingLatest = useSelector(isShowingLatestState);
   const history = useSelector(s => s.game.states || []);
   const canSuggestAction = currentPlayerCanAct && showingLatest;
-  const usernameMap = useMemo(() =>
-    game && game.players
-      ? fromPairs(Object.values(game.players).map(p => [p.user, p.username]))
-      : {}
-  );
+  const usernameMap = useSelector(getUsernameMap);
   const bottomElement = useRef();
   const [scrolledUp, setScrolledUp] = useState(false);
   const onScroll = useCallback(e => {
@@ -135,8 +131,9 @@ function Game(props) {
             <LogEntry
               key={index}
               index={index}
-              state={s}
+              log={s.log}
               map={usernameMap}
+              color={index == shownIndex ? "primary" : "dark"}
               ref={index == history.length - 1 ? bottomElement : null}
             />
           ))}

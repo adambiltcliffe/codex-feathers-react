@@ -1,6 +1,6 @@
 import CodexGame, { constants } from "@adam.biltcliffe/codex";
 
-import React from "react";
+import React, { useMemo } from "react";
 import { Columns, Heading, Level } from "react-bulma-components";
 
 import { useSelector } from "react-redux";
@@ -14,9 +14,9 @@ import groupBy from "lodash/groupBy";
 import partition from "lodash/partition";
 import sortBy from "lodash/sortBy";
 
-function PlayerGameBoardArea(props) {
+const PlayerGameBoardArea = React.memo(props => {
   const { entities } = props;
-  const rows = chunk(entities, 5);
+  const rows = useMemo(() => chunk(entities, 5), [entities]);
   return (
     <>
       {rows.map(row => (
@@ -30,7 +30,7 @@ function PlayerGameBoardArea(props) {
       ))}
     </>
   );
-}
+});
 
 function PatrolZoneArea(props) {
   const { entities } = props;
