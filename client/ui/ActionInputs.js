@@ -24,7 +24,7 @@ function requiredActionType(state) {
   return null;
 }
 
-function ActionInputs(props) {
+const ActionInputs = React.memo(props => {
   const { state } = props;
   const debug = useSelector(s => s.debug);
   if (debug) {
@@ -46,6 +46,6 @@ function ActionInputs(props) {
       <Panel.Block>End your turn</Panel.Block>
     </Panel>
   );
-}
+});
 
 export default ActionInputs;

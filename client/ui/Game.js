@@ -63,6 +63,29 @@ const LogEntry = React.memo(
   })
 );
 
+const LogColumn = React.memo(
+  ({ history, usernameMap, shownIndex, onScroll, bottomRef }) => (
+    <Columns.Column
+      size="one-fifth"
+      className="right-scrollable-panel"
+      onScroll={onScroll}
+    >
+      <ErrorBoundary>
+        {history.map((s, index) => (
+          <LogEntry
+            key={index}
+            index={index}
+            log={s.log}
+            map={usernameMap}
+            color={index == shownIndex ? "primary" : "dark"}
+            ref={index == history.length - 1 ? bottomRef : null}
+          />
+        ))}
+      </ErrorBoundary>
+    </Columns.Column>
+  )
+);
+
 function Game(props) {
   const { id } = useParams();
   const dispatch = useDispatch();
@@ -121,24 +144,13 @@ function Game(props) {
           ) : null}
         </ErrorBoundary>
       </Columns.Column>
-      <Columns.Column
-        size="one-fifth"
-        className="right-scrollable-panel"
+      <LogColumn
+        history={history}
+        usernameMap={usernameMap}
+        shownIndex={shownIndex}
         onScroll={onScroll}
-      >
-        <ErrorBoundary>
-          {history.map((s, index) => (
-            <LogEntry
-              key={index}
-              index={index}
-              log={s.log}
-              map={usernameMap}
-              color={index == shownIndex ? "primary" : "dark"}
-              ref={index == history.length - 1 ? bottomElement : null}
-            />
-          ))}
-        </ErrorBoundary>
-      </Columns.Column>
+        bottomRef={bottomElement}
+      />
     </Columns>
   );
 }

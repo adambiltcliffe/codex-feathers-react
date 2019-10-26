@@ -14,19 +14,26 @@ import groupBy from "lodash/groupBy";
 import partition from "lodash/partition";
 import sortBy from "lodash/sortBy";
 
+const PlayerGameBoardRow = React.memo(props => {
+  const { entities } = props;
+  return (
+    <Columns>
+      {entities.map(e => (
+        <Columns.Column size="one-fifth" key={e.id}>
+          <EntityCard entity={e} />
+        </Columns.Column>
+      ))}
+    </Columns>
+  );
+});
+
 const PlayerGameBoardArea = React.memo(props => {
   const { entities } = props;
   const rows = useMemo(() => chunk(entities, 5), [entities]);
   return (
     <>
       {rows.map(row => (
-        <Columns key={row.map(e => e.id).join(",")}>
-          {row.map(e => (
-            <Columns.Column size="one-fifth" key={e.id}>
-              <EntityCard entity={e} />
-            </Columns.Column>
-          ))}
-        </Columns>
+        <PlayerGameBoardRow entities={row} key={row.map(e => e.id).join(",")} />
       ))}
     </>
   );
@@ -60,10 +67,12 @@ function isBackline(entity) {
 
 function PlayerGameBoard(props) {
   const { player, playerNumber, entities, invert, username, isYou } = props;
-  const [backline, frontline] = partition(entities, isBackline);
-  const [patrolling, resting] = partition(
-    frontline,
-    e => e.current.patrolSlot !== null
+  const [backline, frontline] = useMemo(() => partition(entities, isBackline), [
+    entities
+  ]);
+  const [patrolling, resting] = useMemo(
+    () => partition(frontline, e => e.current.patrolSlot !== null),
+    [frontline]
   );
   const handCount = player.hand ? player.hand.length : player.handCount;
   const discardCount = player.discard
