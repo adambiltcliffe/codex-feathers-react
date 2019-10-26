@@ -1,11 +1,13 @@
 import CodexGame from "@adam.biltcliffe/codex";
 
 import React from "react";
+import { useSelector } from "react-redux";
 
 import { Content, Panel } from "react-bulma-components";
 
 import lowerCase from "lodash/lowerCase";
 import upperFirst from "lodash/upperFirst";
+import { getUsernameMap } from "../features/game/selectors";
 
 function displayType(t) {
   return upperFirst(lowerCase(t));
@@ -19,12 +21,13 @@ function displayColor(c) {
   return upperFirst(lowerCase(c));
 }
 
-function displayOwner(entity) {
-  return `(Owned by ${entity.owner})`;
+function displayOwner(entity, usernameMap) {
+  return `(Owned by ${usernameMap[entity.owner]})`;
 }
 
 const EntityCard = React.memo(props => {
   const { entity } = props;
+  const usernameMap = useSelector(getUsernameMap);
   if (!entity) {
     return null;
   }
@@ -73,7 +76,8 @@ const EntityCard = React.memo(props => {
     <>
       {showOwner ? (
         <div className="content is-small card-text no-margin">{`${displayOwner(
-          entity
+          entity,
+          usernameMap
         )}`}</div>
       ) : null}
       {CodexGame.interface.makeAbilityText(entity).map((s, index) => (

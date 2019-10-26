@@ -21,6 +21,12 @@ function WorkerPrompt(props) {
   if (!CodexGame.interface.canTakeWorkerAction(state)) {
     return null;
   }
+  const fullHand =
+    state.players[state.playerList[state.activePlayerIndex]].hand;
+  const handIndices = uniqBy(range(fullHand.length), index => fullHand[index]);
+  if (fullHand.length == 0) {
+    return null;
+  }
   const [currentIndex, setCurrentIndex] = useState(0);
   const handleChange = useCallback(e => {
     setCurrentIndex(Number.parseInt(e.target.value));
@@ -33,9 +39,6 @@ function WorkerPrompt(props) {
     },
     [currentIndex]
   );
-  const fullHand =
-    state.players[state.playerList[state.activePlayerIndex]].hand;
-  const handIndices = uniqBy(range(fullHand.length), index => fullHand[index]);
   return (
     <>
       <Panel.Block>
