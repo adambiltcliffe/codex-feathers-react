@@ -12,6 +12,7 @@ import DebugActionInput from "./DebugActionInput";
 import ActivatePrompt from "./prompts/ActivatePrompt";
 import AttackPrompt from "./prompts/AttackPrompt";
 import BuildPrompt from "./prompts/BuildPrompt";
+import LevelPrompt from "./prompts/LevelPrompt";
 import PlayPrompt from "./prompts/PlayPrompt";
 import SummonPrompt from "./prompts/SummonPrompt";
 import WorkerPrompt from "./prompts/WorkerPrompt";
@@ -44,7 +45,7 @@ const ActionInputs = React.memo(props => {
       <ActivatePrompt state={state} />
       <PlayPrompt state={state} />
       <SummonPrompt state={state} />
-      <Panel.Block>Level up a hero</Panel.Block>
+      <LevelPrompt state={state} />
       <BuildPrompt state={state} />
       <Panel.Block>End your turn</Panel.Block>
     </Panel>
