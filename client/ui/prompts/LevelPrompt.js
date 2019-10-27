@@ -42,7 +42,7 @@ const LevelPrompt = React.memo(props => {
     setCurrentHero(e.target.value);
   }, []);
   const handleChangeAmount = useCallback(e => {
-    setCurrentAmount(e.target.value);
+    setCurrentAmount(Number.parseInt(e.target.value));
   });
   const handleSubmit = useCallback(
     e => {

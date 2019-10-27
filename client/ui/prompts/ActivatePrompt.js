@@ -36,7 +36,7 @@ const ActivatePrompt = React.memo(props => {
     setCurrentSource(e.target.value);
   }, []);
   const handleChangeIndex = useCallback(e => {
-    setCurrentIndex(e.target.value);
+    setCurrentIndex(Number.parseInt(e.target.value));
   });
   const handleSubmit = useCallback(
     e => {

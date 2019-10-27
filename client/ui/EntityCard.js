@@ -97,8 +97,9 @@ const EntityCard = React.memo(props => {
       : entity.current.type == "BUILDING"
       ? `${entity.current.hp}hp`
       : `${entity.current.attack}/${entity.current.hp}`;
+  const exhaustedClass = entity.ready ? "" : "exhausted";
   return (
-    <Panel>
+    <Panel className={exhaustedClass}>
       <Panel.Block>
         <div>{heading}</div>
       </Panel.Block>
