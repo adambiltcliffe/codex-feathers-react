@@ -66,7 +66,7 @@ const LevelPrompt = React.memo(props => {
             <select defaultValue={currentHero} onChange={handleChangeHero}>
               {heroes.map(id => (
                 <option key={id} value={id}>
-                  {upperFirst(state.entities[id].current.name)}
+                  {upperFirst(state.entities[id].current.displayName)}
                 </option>
               ))}
             </select>

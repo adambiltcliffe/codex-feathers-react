@@ -18,7 +18,7 @@ const EndTurnPrompt = React.memo(props => {
   const dispatch = useDispatch();
   const pending = useSelector(actionIsPending);
   const possiblePatrollers = useMemo(
-    () => Object.values(state.entities).map(e => e.id),
+    () => CodexGame.interface.legalPatrollers(state),
     [state]
   );
   const [currentAction, setCurrentAction] = useState({
@@ -103,7 +103,7 @@ const EndTurnPrompt = React.memo(props => {
               </option>
               {possiblePatrollers.map(id => (
                 <option key={id} value={id}>
-                  Squad Leader: {state.entities[id].current.name}
+                  Squad Leader: {state.entities[id].current.displayName}
                 </option>
               ))}
             </select>
@@ -118,7 +118,7 @@ const EndTurnPrompt = React.memo(props => {
               </option>
               {possiblePatrollers.map(id => (
                 <option key={id} value={id}>
-                  Elite: {state.entities[id].current.name}
+                  Elite: {state.entities[id].current.displayName}
                 </option>
               ))}
             </select>
@@ -133,7 +133,7 @@ const EndTurnPrompt = React.memo(props => {
               </option>
               {possiblePatrollers.map(id => (
                 <option key={id} value={id}>
-                  Scavenger: {state.entities[id].current.name}
+                  Scavenger: {state.entities[id].current.displayName}
                 </option>
               ))}
             </select>
@@ -148,7 +148,7 @@ const EndTurnPrompt = React.memo(props => {
               </option>
               {possiblePatrollers.map(id => (
                 <option key={id} value={id}>
-                  Technician: {state.entities[id].current.name}
+                  Technician: {state.entities[id].current.displayName}
                 </option>
               ))}
             </select>
@@ -163,7 +163,7 @@ const EndTurnPrompt = React.memo(props => {
               </option>
               {possiblePatrollers.map(id => (
                 <option key={id} value={id}>
-                  Lookout: {state.entities[id].current.name}
+                  Lookout: {state.entities[id].current.displayName}
                 </option>
               ))}
             </select>

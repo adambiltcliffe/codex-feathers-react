@@ -58,7 +58,7 @@ const AttackPrompt = React.memo(props => {
             >
               {attackers.map(id => (
                 <option key={id} value={id}>
-                  {upperFirst(state.entities[id].current.name)}
+                  {upperFirst(state.entities[id].current.displayName)}
                 </option>
               ))}
             </select>
@@ -68,7 +68,7 @@ const AttackPrompt = React.memo(props => {
             <select defaultValue={currentTarget} onChange={handleChangeTarget}>
               {tree[currentAttacker].map(id => (
                 <option key={id} value={id}>
-                  {upperFirst(state.entities[id].current.name)}
+                  {upperFirst(state.entities[id].current.displayName)}
                 </option>
               ))}
             </select>

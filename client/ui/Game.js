@@ -157,8 +157,9 @@ const GameView = React.memo(props => {
               <div>Loading ...</div>
             )}
             <PlaybackButtons />
-            <Queue state={currentState} />
             {canAct ? <ActionInputs state={currentState} /> : null}
+            <Content />
+            <Queue state={currentState} />
           </div>
         </ErrorBoundary>
       </Columns.Column>

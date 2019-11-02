@@ -10,7 +10,7 @@ import CodexGame from "@adam.biltcliffe/codex";
 import upperFirst from "lodash/upperFirst";
 
 function describeAbility(entity, index) {
-  return JSON.stringify(entity.current.abilities[index]);
+  return CodexGame.interface.describeEntityAbility(entity, index);
 }
 
 const ActivatePrompt = React.memo(props => {
@@ -60,7 +60,7 @@ const ActivatePrompt = React.memo(props => {
             <select defaultValue={currentSource} onChange={handleChangeSource}>
               {sources.map(id => (
                 <option key={id} value={id}>
-                  {upperFirst(state.entities[id].current.name)}
+                  {upperFirst(state.entities[id].current.displayName)}
                 </option>
               ))}
             </select>

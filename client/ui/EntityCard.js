@@ -59,7 +59,7 @@ const EntityCard = React.memo(props => {
     entity.current.type == "HERO" ? (
       <>
         <div>
-          {upperFirst(entity.current.name)}, {entity.current.title}
+          {upperFirst(entity.current.displayName)}, {entity.current.title}
         </div>
         <div className="content is-small">
           {subtitle}, level {entity.level}
@@ -67,7 +67,7 @@ const EntityCard = React.memo(props => {
       </>
     ) : (
       <>
-        <div>{upperFirst(entity.current.name)}</div>
+        <div>{upperFirst(entity.current.displayName)}</div>
         <div className="content is-small">{subtitle}</div>
       </>
     );
