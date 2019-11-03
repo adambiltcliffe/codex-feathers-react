@@ -1,5 +1,24 @@
 import CodexGame from "@adam.biltcliffe/codex";
 
+import forEach from "lodash/forEach";
+import produce from "immer";
+
+export function annotateDisplayNames(state) {
+  const counts = {};
+  forEach(state.entities, e => {
+    counts[e.current.name] = (counts[e.current.name] || 0) + 1;
+  });
+  return produce(state, draft => {
+    forEach(draft.entities, e => {
+      if (counts[e.current.name] > 1) {
+        e.current.displayName = `${e.current.name} (#${e.id.substring(1)})`;
+      } else {
+        e.current.displayName = e.current.name;
+      }
+    });
+  });
+}
+
 export function makeGameTitle(game) {
   return game.players[0]
     ? game.players[1]

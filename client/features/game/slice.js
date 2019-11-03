@@ -4,24 +4,7 @@ import { authActions } from "../auth/slice";
 import { lobbyActions } from "../lobby/slice";
 import CodexGame from "@adam.biltcliffe/codex";
 
-import forEach from "lodash/forEach";
-import produce from "immer";
-
-function annotate(state) {
-  const counts = {};
-  forEach(state.entities, e => {
-    counts[e.current.name] = (counts[e.current.name] || 0) + 1;
-  });
-  return produce(state, draft => {
-    forEach(draft.entities, e => {
-      if (counts[e.current.name] > 1) {
-        e.current.displayName = `${e.current.name} (#${e.id.substring(1)})`;
-      } else {
-        e.current.displayName = e.current.name;
-      }
-    });
-  });
-}
+import { annotateDisplayNames } from "../../util";
 
 function advance(state) {
   const begin = Date.now();
@@ -38,7 +21,7 @@ function advance(state) {
       step.action,
       step.newInfo
     );
-    state.states.push(annotate(newState));
+    state.states.push(annotateDisplayNames(newState));
     count++;
   }
   const elapsed = Date.now() - begin;
