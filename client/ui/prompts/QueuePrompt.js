@@ -12,6 +12,7 @@ function QueuePrompt(props) {
   const dispatch = useDispatch();
   return (
     <>
+      <Content>Add triggered actions to the queue:</Content>
       {state.newTriggers.map((trigger, index) => (
         <Button
           key={index}

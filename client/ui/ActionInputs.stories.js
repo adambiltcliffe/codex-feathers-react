@@ -9,6 +9,8 @@ import { annotateDisplayNames } from "../util";
 import { action } from "@storybook/addon-actions";
 import ErrorBoundary from "./ErrorBoundary";
 
+import { constants } from "@adam.biltcliffe/codex";
+
 const tg = new TestGame();
 const [p1id, p2id] = tg.state.playerList;
 const testState1 = annotateDisplayNames(tg.state);
@@ -156,6 +158,7 @@ export const obliterateForced = () => (
 // Codex choice prompt
 
 const tgc = new TestGame();
+tgc.setCodexBySpec(p1id, constants.specs.finesse);
 tgc.playActions([{ type: "endTurn" }, { type: "endTurn" }]);
 const testStateCodex = annotateDisplayNames(tgc.state);
 

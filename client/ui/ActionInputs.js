@@ -19,24 +19,13 @@ import PlayPrompt from "./prompts/PlayPrompt";
 import SummonPrompt from "./prompts/SummonPrompt";
 import WorkerPrompt from "./prompts/WorkerPrompt";
 
-// eventually this should be replaced with a helper in CodexGame.interface
-function requiredActionType(state) {
-  if (state.newTriggers && state.newTriggers.length > 0) {
-    return "queue";
-  }
-  if (state.currentTrigger) {
-    return "choice";
-  }
-  return null;
-}
-
 const ActionInputs = React.memo(props => {
   const { state } = props;
   const debug = useSelector(s => s.debug);
   if (debug) {
     return <DebugActionInput state={state} />;
   }
-  const rat = requiredActionType(state);
+  const rat = CodexGame.interface.requiredActionType(state);
   if (rat == "queue") {
     return <QueuePrompt state={state} />;
   } else if (rat == "choice") {

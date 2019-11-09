@@ -6,8 +6,7 @@ import { TestGame } from "@adam.biltcliffe/codex";
 import EntityCard from "./EntityCard";
 import { Columns } from "react-bulma-components";
 import { annotateDisplayNames } from "../util";
-
-const action = () => console.log;
+import { action } from '@storybook/addon-actions';
 
 const tg = new TestGame();
 const [p1id, p2id] = tg.state.playerList;
