@@ -7,6 +7,7 @@ import ActionInputs from "./ActionInputs";
 import { Columns } from "react-bulma-components";
 import { annotateDisplayNames } from "../util";
 import { action } from "@storybook/addon-actions";
+import ErrorBoundary from "./ErrorBoundary";
 
 const tg = new TestGame();
 const [p1id, p2id] = tg.state.playerList;
@@ -35,9 +36,11 @@ export default {
   decorators: [
     storyFn => (
       <Provider store={store}>
-        <Columns>
-          <Columns.Column size="one-fifth">{storyFn()}</Columns.Column>
-        </Columns>
+        <ErrorBoundary>
+          <Columns>
+            <Columns.Column size="one-fifth">{storyFn()}</Columns.Column>
+          </Columns>
+        </ErrorBoundary>
       </Provider>
     )
   ]
@@ -46,6 +49,23 @@ export default {
 export const startOfGame = () => <ActionInputs state={testState1} />;
 
 export const withEntities = () => <ActionInputs state={testState2} />;
+
+// Queue prompt
+
+const tgq = new TestGame();
+tgq
+  .insertEntities(p2id, [
+    "helpful_turtle",
+    "helpful_turtle",
+    "starcrossed_starlet"
+  ])
+  .playAction({ type: "endTurn" });
+const testStateQueue = annotateDisplayNames(tgq.state);
+
+console.log("ok");
+console.log(testStateQueue);
+
+export const queueNewTriggers = () => <ActionInputs state={testStateQueue} />;
 
 // Single-target choice prompt
 
@@ -60,6 +80,24 @@ export const singleTargetChoice = () => (
   <ActionInputs state={testStateSingleTarget} />
 );
 
+// Multiple-target choice prompt
+
+const tgmt = new TestGame();
+tgmt
+  .insertEntities(p1id, [
+    "river_montoya",
+    "tenderfoot",
+    "older_brother",
+    "fruit_ninja"
+  ])
+  .putCardsInHand(p1id, ["two_step"])
+  .playAction({ type: "play", card: "two_step" });
+const testStateMultiTarget = annotateDisplayNames(tgmt.state);
+
+export const multiTargetChoice = () => (
+  <ActionInputs state={testStateMultiTarget} />
+);
+
 // Modal choice prompt
 
 const tgmod = new TestGame();
@@ -72,3 +110,53 @@ tgmod
 const testStateModal = annotateDisplayNames(tgmod.state);
 
 export const modalChoice = () => <ActionInputs state={testStateModal} />;
+
+// Obliterate prompt
+
+const tgob1 = new TestGame()
+  .insertEntity(p1id, "pirate_gunship")
+  .insertEntities(p2id, [
+    "tenderfoot",
+    "older_brother",
+    "brick_thief",
+    "eggship"
+  ]);
+const [pg1] = tgob1.insertedEntityIds;
+tgob1.playAction({
+  type: "attack",
+  attacker: pg1,
+  target: tgob1.findBaseId(p2id)
+});
+const testStateObliterate1 = annotateDisplayNames(tgob1.state);
+
+export const obliterateUnforced = () => (
+  <ActionInputs state={testStateObliterate1} />
+);
+
+const tgob2 = new TestGame()
+  .insertEntity(p1id, "pirate_gunship")
+  .insertEntities(p2id, [
+    "iron_man",
+    "tenderfoot",
+    "sneaky_pig",
+    "revolver_ocelot"
+  ]);
+const [pg2] = tgob2.insertedEntityIds;
+tgob2.playAction({
+  type: "attack",
+  attacker: pg2,
+  target: tgob2.findBaseId(p2id)
+});
+const testStateObliterate2 = annotateDisplayNames(tgob2.state);
+
+export const obliterateForced = () => (
+  <ActionInputs state={testStateObliterate2} />
+);
+
+// Codex choice prompt
+
+const tgc = new TestGame();
+tgc.playActions([{ type: "endTurn" }, { type: "endTurn" }]);
+const testStateCodex = annotateDisplayNames(tgc.state);
+
+export const codexChoice = () => <ActionInputs state={testStateCodex} />;

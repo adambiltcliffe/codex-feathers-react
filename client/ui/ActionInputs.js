@@ -7,6 +7,7 @@ import { gameActions } from "../features/game/slice";
 
 import { Box, Panel } from "react-bulma-components";
 
+import QueuePrompt from "./prompts/QueuePrompt";
 import ChoicePrompt from "./prompts/ChoicePrompt";
 import DebugActionInput from "./DebugActionInput";
 import ActivatePrompt from "./prompts/ActivatePrompt";
@@ -36,7 +37,9 @@ const ActionInputs = React.memo(props => {
     return <DebugActionInput state={state} />;
   }
   const rat = requiredActionType(state);
-  if (rat) {
+  if (rat == "queue") {
+    return <QueuePrompt state={state} />;
+  } else if (rat == "choice") {
     return <ChoicePrompt state={state} />;
   }
   return (
