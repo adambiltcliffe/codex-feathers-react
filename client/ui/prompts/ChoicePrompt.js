@@ -48,67 +48,70 @@ const buildMultipleChoicePrompt = (
   getTargetsAndCount,
   buildAction,
   displayOption
-) => props => {
-  const { state } = props;
-  const dispatch = useDispatch();
-  const pending = useSelector(actionIsPending);
-  const { targets, count } = useMemo(() => getTargetsAndCount(state), [state]);
-  const [currentChoices, setCurrentChoices] = useState(
-    () => new Array(count).fill(null),
-    [state]
-  );
-  const changeHandlers = useMemo(
-    () =>
-      new Array(count).fill(null).map((_, index) => e =>
-        setCurrentChoices(
-          produce(currentChoices, draft => {
-            draft[index] = e.target.value == "null" ? null : e.target.value;
-          })
-        )
-      ),
-    [state, currentChoices]
-  );
-  const currentAction = useMemo(() => buildAction(currentChoices), [
-    state,
-    currentChoices
-  ]);
-  const handleSubmit = useCallback(
-    e => {
-      e.preventDefault();
-      dispatch(gameActions.act(currentAction));
-    },
-    [currentAction]
-  );
-  const isLegal = useMemo(
-    () => CodexGame.interface.isLegalAction(state, currentAction),
-    [state, currentAction]
-  );
-  return (
-    <>
-      {currentChoices.map((c, index) => (
-        <div className="select" key={index}>
-          <select defaultValue={c} onChange={changeHandlers[index]}>
-            <option key="null" value="null">
-              Nothing
-            </option>
-            {targets.map(opt => (
-              <option key={opt} value={opt}>
-                {displayOption(state, opt)}
+) =>
+  React.memo(props => {
+    const { state } = props;
+    const dispatch = useDispatch();
+    const pending = useSelector(actionIsPending);
+    const { targets, count } = useMemo(() => getTargetsAndCount(state), [
+      state
+    ]);
+    const [currentChoices, setCurrentChoices] = useState(
+      () => new Array(count).fill(null),
+      [state]
+    );
+    const changeHandlers = useMemo(
+      () =>
+        new Array(count).fill(null).map((_, index) => e =>
+          setCurrentChoices(
+            produce(currentChoices, draft => {
+              draft[index] = e.target.value == "null" ? null : e.target.value;
+            })
+          )
+        ),
+      [state, currentChoices]
+    );
+    const currentAction = useMemo(() => buildAction(currentChoices), [
+      state,
+      currentChoices
+    ]);
+    const handleSubmit = useCallback(
+      e => {
+        e.preventDefault();
+        dispatch(gameActions.act(currentAction));
+      },
+      [currentAction]
+    );
+    const isLegal = useMemo(
+      () => CodexGame.interface.isLegalAction(state, currentAction),
+      [state, currentAction]
+    );
+    return (
+      <>
+        {currentChoices.map((c, index) => (
+          <div className="select" key={index}>
+            <select defaultValue={c} onChange={changeHandlers[index]}>
+              <option key="null" value="null">
+                Nothing
               </option>
-            ))}
-          </select>
-        </div>
-      ))}
-      <button
-        className={pending ? "button is-loading" : "button"}
-        disabled={!isLegal}
-        onClick={handleSubmit}
-      >
-        Okay
-      </button>
-    </>
-  );
-};
+              {targets.map(opt => (
+                <option key={opt} value={opt}>
+                  {displayOption(state, opt)}
+                </option>
+              ))}
+            </select>
+          </div>
+        ))}
+        <button
+          className={pending ? "button is-loading" : "button"}
+          disabled={!isLegal}
+          onClick={handleSubmit}
+        >
+          Okay
+        </button>
+      </>
+    );
+  });
 
 const MultipleTargetChoicePrompt = buildMultipleChoicePrompt(
   CodexGame.interface.getCurrentPromptCountAndTargets,
@@ -118,6 +121,30 @@ const MultipleTargetChoicePrompt = buildMultipleChoicePrompt(
   }),
   (state, id) => state.entities[id].current.displayName
 );
+
+const CodexChoicePrompt = buildMultipleChoicePrompt(
+  CodexGame.interface.getCurrentPromptCodexCards,
+  currentChoices =>
+    CodexGame.interface.makeTechChoiceAction(
+      currentChoices.filter(c => c !== null)
+    ),
+  (state, index) => {
+    const { card, n } = CodexGame.interface.getCurrentPromptCodexCards(state)[
+      index
+    ];
+    return `${CodexGame.getCardInfo(card)} (${n})`;
+  }
+);
+
+const ObliterateChoicePrompt = ({ state }) => {
+  const { fixed } = CodexGame.interface.getCurrentPromptCountAndTargets(state);
+  return (
+    <>
+      <Content>Additional obliterate info: {fixed}</Content>
+      <MultipleTargetChoicePrompt state={state} />
+    </>
+  );
+};
 
 function ModalChoicePrompt(props) {
   const { state } = props;
@@ -153,8 +180,16 @@ function ChoicePrompt(props) {
       control = <MultipleTargetChoicePrompt state={state} />;
       break;
     }
+    case constants.targetMode.obliterate: {
+      control = <ObliterateChoicePrompt state={state} />;
+      break;
+    }
     case constants.targetMode.modal: {
       control = <ModalChoicePrompt state={state} />;
+      break;
+    }
+    case constants.targetMode.codex: {
+      control = <CodexChoicePrompt state={state} />;
       break;
     }
     default: {
