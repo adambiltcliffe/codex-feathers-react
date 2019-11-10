@@ -64,9 +64,6 @@ tgq
   .playAction({ type: "endTurn" });
 const testStateQueue = annotateDisplayNames(tgq.state);
 
-console.log("ok");
-console.log(testStateQueue);
-
 export const queueNewTriggers = () => <ActionInputs state={testStateQueue} />;
 
 // Single-target choice prompt
