@@ -25,11 +25,12 @@ function JSONActionButton({ action }) {
 function SingleTargetChoicePrompt(props) {
   const { state } = props;
   const dispatch = useDispatch();
+  const pending = useSelector(actionIsPending);
   return (
     <>
       {CodexGame.interface
         .getCurrentPromptCountAndTargets(state)
-        .targets.map(id => (
+        .options.map(id => (
           <Button
             key={id}
             className={pending ? "button is-loading" : "button"}
@@ -53,9 +54,10 @@ const buildMultipleChoicePrompt = (
     const { state } = props;
     const dispatch = useDispatch();
     const pending = useSelector(actionIsPending);
-    const { targets, count } = useMemo(() => getTargetsAndCount(state), [
+    const { options, count } = useMemo(() => getTargetsAndCount(state), [
       state
     ]);
+    console.log(count);
     const [currentChoices, setCurrentChoices] = useState(
       () => new Array(count).fill(null),
       [state]
@@ -71,7 +73,7 @@ const buildMultipleChoicePrompt = (
         ),
       [state, currentChoices]
     );
-    const currentAction = useMemo(() => buildAction(currentChoices), [
+    const currentAction = useMemo(() => buildAction(state, currentChoices), [
       state,
       currentChoices
     ]);
@@ -94,7 +96,7 @@ const buildMultipleChoicePrompt = (
               <option key="null" value="null">
                 Nothing
               </option>
-              {targets.map(opt => (
+              {options.map(opt => (
                 <option key={opt} value={opt}>
                   {displayOption(state, opt)}
                 </option>
@@ -115,7 +117,7 @@ const buildMultipleChoicePrompt = (
 
 const MultipleTargetChoicePrompt = buildMultipleChoicePrompt(
   CodexGame.interface.getCurrentPromptCountAndTargets,
-  currentChoices => ({
+  (state, currentChoices) => ({
     type: "choice",
     targets: currentChoices.filter(c => c !== null)
   }),
@@ -123,16 +125,25 @@ const MultipleTargetChoicePrompt = buildMultipleChoicePrompt(
 );
 
 const CodexChoicePrompt = buildMultipleChoicePrompt(
-  CodexGame.interface.getCurrentPromptCodexCards,
-  currentChoices =>
+  state => {
+    const {
+      options,
+      count
+    } = CodexGame.interface.getCurrentPromptCountAndCodex(state);
+    console.log(count);
+    return { count, options: options.map((entry, index) => index) };
+  },
+  (state, currentChoices) =>
     CodexGame.interface.makeTechChoiceAction(
+      state,
       currentChoices.filter(c => c !== null)
     ),
   (state, index) => {
-    const { card, n } = CodexGame.interface.getCurrentPromptCodexCards(state)[
-      index
-    ];
-    return `${CodexGame.getCardInfo(card)} (${n})`;
+    const {
+      options: codex
+    } = CodexGame.interface.getCurrentPromptCountAndCodex(state);
+    const { card, n } = codex[index];
+    return `${CodexGame.interface.getCardInfo(card).name} (${n})`;
   }
 );
 
@@ -140,7 +151,13 @@ const ObliterateChoicePrompt = ({ state }) => {
   const { fixed } = CodexGame.interface.getCurrentPromptCountAndTargets(state);
   return (
     <>
-      <Content>Additional obliterate info: {fixed}</Content>
+      {fixed.map(id => (
+        <div className="select" key={id}>
+          <select disabled>
+            <option>{state.entities[id].current.displayName}</option>
+          </select>
+        </div>
+      ))}
       <MultipleTargetChoicePrompt state={state} />
     </>
   );
@@ -149,6 +166,7 @@ const ObliterateChoicePrompt = ({ state }) => {
 function ModalChoicePrompt(props) {
   const { state } = props;
   const dispatch = useDispatch();
+  const pending = useSelector(actionIsPending);
   return (
     <>
       {CodexGame.interface
