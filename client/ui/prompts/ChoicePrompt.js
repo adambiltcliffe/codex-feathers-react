@@ -11,7 +11,7 @@ import { gameActions } from "../../features/game/slice";
 import { actionIsPending } from "../../features/game/selectors";
 
 // Currently this is a fallback implementation to actually let you
-// play the game
+// play the game if the prompt mode isn't implemented
 
 function JSONActionButton({ action }) {
   const dispatch = useDispatch();
@@ -44,14 +44,15 @@ function SingleTargetChoicePrompt(props) {
   );
 }
 
-function MultipleTargetChoicePrompt(props) {
+const buildMultipleChoicePrompt = (
+  getTargetsAndCount,
+  buildAction,
+  displayOption
+) => props => {
   const { state } = props;
   const dispatch = useDispatch();
   const pending = useSelector(actionIsPending);
-  const { targets, count } = useMemo(
-    () => CodexGame.interface.getCurrentPromptCountAndTargets(state),
-    [state]
-  );
+  const { targets, count } = useMemo(() => getTargetsAndCount(state), [state]);
   const [currentChoices, setCurrentChoices] = useState(
     () => new Array(count).fill(null),
     [state]
@@ -67,10 +68,10 @@ function MultipleTargetChoicePrompt(props) {
       ),
     [state, currentChoices]
   );
-  const currentAction = useMemo(
-    () => ({ type: "choice", targets: currentChoices.filter(c => c !== null) }),
-    [state, currentChoices]
-  );
+  const currentAction = useMemo(() => buildAction(currentChoices), [
+    state,
+    currentChoices
+  ]);
   const handleSubmit = useCallback(
     e => {
       e.preventDefault();
@@ -90,9 +91,9 @@ function MultipleTargetChoicePrompt(props) {
             <option key="null" value="null">
               Nothing
             </option>
-            {targets.map(id => (
-              <option key={id} value={id}>
-                {state.entities[id].current.displayName}
+            {targets.map(opt => (
+              <option key={opt} value={opt}>
+                {displayOption(state, opt)}
               </option>
             ))}
           </select>
@@ -107,7 +108,16 @@ function MultipleTargetChoicePrompt(props) {
       </button>
     </>
   );
-}
+};
+
+const MultipleTargetChoicePrompt = buildMultipleChoicePrompt(
+  CodexGame.interface.getCurrentPromptCountAndTargets,
+  currentChoices => ({
+    type: "choice",
+    targets: currentChoices.filter(c => c !== null)
+  }),
+  (state, id) => state.entities[id].current.displayName
+);
 
 function ModalChoicePrompt(props) {
   const { state } = props;
