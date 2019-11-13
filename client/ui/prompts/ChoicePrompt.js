@@ -57,7 +57,6 @@ const buildMultipleChoicePrompt = (
     const { options, count } = useMemo(() => getTargetsAndCount(state), [
       state
     ]);
-    console.log(count);
     const [currentChoices, setCurrentChoices] = useState(
       () => new Array(count).fill(null),
       [state]
@@ -130,13 +129,13 @@ const CodexChoicePrompt = buildMultipleChoicePrompt(
       options,
       count
     } = CodexGame.interface.getCurrentPromptCountAndCodex(state);
-    console.log(count);
     return { count, options: options.map((entry, index) => index) };
   },
   (state, currentChoices) =>
     CodexGame.interface.makeTechChoiceAction(
       state,
-      currentChoices.filter(c => c !== null)
+      // .map(parseInt) looks like it should work but doesn't!
+      currentChoices.filter(c => c !== null).map(s => parseInt(s))
     ),
   (state, index) => {
     const {
