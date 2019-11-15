@@ -72,13 +72,15 @@ const gameSlice = createSlice({
       state.shownIndex = action.payload;
     },
     onStepCreated(state, action) {
-      const isShowingLatest = state.shownIndex == state.states.length - 1;
-      if (action.payload.game == state.current._id) {
-        state.current.steps[action.payload.index] = action.payload;
-      }
-      advance(state);
-      if (isShowingLatest) {
-        state.shownIndex = state.states.length - 1;
+      if (state.current !== null) {
+        const isShowingLatest = state.shownIndex == state.states.length - 1;
+        if (action.payload.game == state.current._id) {
+          state.current.steps[action.payload.index] = action.payload;
+        }
+        advance(state);
+        if (isShowingLatest) {
+          state.shownIndex = state.states.length - 1;
+        }
       }
     }
   },
@@ -90,7 +92,7 @@ const gameSlice = createSlice({
       state.states = null;
     },
     [lobbyActions.onGameChanged]: (state, action) => {
-      if (action.payload._id == state.current._id) {
+      if (state.current !== null && action.payload._id == state.current._id) {
         state.current = { ...action.payload, steps: state.current.steps };
       }
     }
