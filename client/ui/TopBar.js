@@ -11,6 +11,8 @@ function setDebug(value, dispatch) {
   dispatch(debugActions.setDebug(value));
 }
 
+// Needs a link to lobby if logged in; link to login if not
+
 function TopBar(props) {
   const dispatch = useDispatch();
   const debug = useSelector(s => s.debug);

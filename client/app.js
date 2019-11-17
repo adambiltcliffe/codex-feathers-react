@@ -30,8 +30,10 @@ import gameSlice, { gameActions } from "./features/game/slice";
 import ErrorBoundary from "./ui/ErrorBoundary";
 
 import TopBar from "./ui/TopBar";
+import Login from "./ui/Login";
 import Game from "./ui/Game";
 import Lobby from "./ui/Lobby";
+import Info from "./ui/Info";
 
 const client = feathers();
 client.configure(socketio(io()));
@@ -64,7 +66,7 @@ client.service("steps").on("created", (data, context) => {
   store.dispatch(gameActions.onStepCreated(data));
 });
 
-function TestComponent(props) {
+function RootComponent(props) {
   const user = useSelector(s => s.auth.user);
   const alert = useSelector(s => s.alert.currentAlert);
   useEffect(() => {
@@ -90,13 +92,25 @@ function TestComponent(props) {
                 <Game user={user} />
               </ErrorBoundary>
             </Route>
+            <Route path="/about">
+              <Info />
+            </Route>
             <Route>
               <ErrorBoundary>
                 <Lobby />
               </ErrorBoundary>
             </Route>
           </Switch>
-        ) : null}
+        ) : (
+          <Switch>
+            <Route path="/about">
+              <Info />
+            </Route>
+            <Route>
+              <Login />
+            </Route>
+          </Switch>
+        )}
       </BrowserRouter>
     </ErrorBoundary>
   );
@@ -104,7 +118,7 @@ function TestComponent(props) {
 
 ReactDOM.render(
   <Provider store={store}>
-    <TestComponent />
+    <RootComponent />
   </Provider>,
   document.getElementById("react-root")
 );
