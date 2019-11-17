@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import ReactDOM from "react-dom";
 import { useDispatch, useSelector } from "react-redux";
 import TimeAgo from "react-timeago";
@@ -14,20 +14,16 @@ import {
   getSelectedGame
 } from "../features/lobby/selectors";
 
-import { Card, Heading, Table } from "react-bulma-components";
+import { Button, Card, Heading, Table, Tag } from "react-bulma-components";
+
+import orderBy from "lodash/orderBy";
 
 function setSelected(dispatch, gameId) {
   dispatch(lobbyActions.setSelected(gameId));
 }
 
-function createGame(dispatch) {
-  dispatch(
-    lobbyActions.createGame({
-      comment: Math.random()
-        .toString(36)
-        .substr(2, 10)
-    })
-  );
+function createGame(dispatch, comment) {
+  dispatch(lobbyActions.createGame({ comment }));
 }
 
 function joinGame(dispatch, gameId) {
@@ -49,17 +45,23 @@ function setReady(dispatch, gameId, ready) {
 function GameDetail({ game }) {
   if (game === undefined) return null;
   const dispatch = useDispatch();
-  const gameLink = React.forwardRef((props, ref) => (
-    <Link innerRef={ref} {...props} />
-  ));
   const statusComment = game.started
     ? "Game has started."
     : "Game will start when both players are ready.";
   const playerChips = Object.values(game.players).map(p => {
-    const label = game.started
-      ? `${p.username}${p.user == game.activePlayer ? " (active player)" : ""}`
-      : `${p.username} (${p.ready ? "" : "not "}ready)`;
-    return <span key={p._id}>{label}</span>;
+    const add = game.started
+      ? p.user == game.activePlayer
+        ? "active player"
+        : ""
+      : p.ready
+      ? "ready"
+      : "not ready";
+    return (
+      <Tag.Group gapless key={p._id}>
+        <Tag color="primary">{p.username}</Tag>
+        <Tag>{add}</Tag>
+      </Tag.Group>
+    );
   });
   return (
     <Card>
@@ -69,8 +71,8 @@ function GameDetail({ game }) {
         </span>
         <Heading>{makeGameTitle(game)}</Heading>
         <Heading subtitle>{game.comment}</Heading>
-        <span>{statusComment}</span>
-        {playerChips}
+        <div>{statusComment}</div>
+        <div>{playerChips}</div>
       </Card.Content>
 
       <Card.Footer>
@@ -110,18 +112,15 @@ function GameDetail({ game }) {
         >
           Delete
         </Card.Footer.Item>
-        <Card.Footer.Item
-          renderAs="a"
-          color="primary"
-          component={gameLink}
-          to={`/game/${game._id}`}
-          target="_blank"
-        >
-          Open game
+        <Card.Footer.Item>
+          {game.started ? (
+            <Link to={`/game/${game._id}`} target="_blank">
+              Open game
+            </Link>
+          ) : (
+            "Not started"
+          )}
         </Card.Footer.Item>
-        <Link to={`/game/${game._id}`} target="_blank">
-          debug open game
-        </Link>
       </Card.Footer>
     </Card>
   );
@@ -149,6 +148,7 @@ function GameRow({ game, selected }) {
 function Lobby(props) {
   const dispatch = useDispatch();
   const games = useSelector(getAllGames);
+  const [newGameComment, setNewGameComment] = useState("");
   useEffect(() => {
     dispatch(lobbyActions.openLobby());
     return () => {
@@ -158,7 +158,7 @@ function Lobby(props) {
   const errors = useSelector(getErrors);
   const selectedGame = useSelector(getSelectedGame);
   const gameRows = games
-    ? Object.values(games).map(g => (
+    ? orderBy(games, [g => g.updatedAt], ["desc"]).map(g => (
         <GameRow
           key={g._id}
           game={g}
@@ -166,10 +166,31 @@ function Lobby(props) {
         />
       ))
     : null;
+  const updateComment = useCallback(
+    evt => setNewGameComment(evt.target.value),
+    [setNewGameComment]
+  );
   const createGameButton = (
-    <button onClick={useCallback(() => createGame(dispatch))}>
-      Create Game
-    </button>
+    <div className="field">
+      <label className="label">Create a new game</label>
+      <div className="control">
+        <input
+          className="input"
+          placeholder="Comment"
+          value={newGameComment}
+          onChange={updateComment}
+        />
+      </div>
+      <Button
+        onClick={useCallback(() => {
+          createGame(dispatch, newGameComment);
+          console.log("do the shuffle");
+          setNewGameComment("");
+        }, [newGameComment, setNewGameComment])}
+      >
+        Create Game
+      </Button>
+    </div>
   );
   return (
     <div>
