@@ -1,6 +1,7 @@
 const { authenticate } = require("@feathersjs/authentication").hooks;
 const { protect } = require("@feathersjs/authentication-local").hooks;
 const {
+  actOnDispatch,
   alterItems,
   disallow,
   iff,
@@ -10,6 +11,7 @@ const {
 
 const validateCreateStep = require("../../hooks/validate-create-step");
 const generateStepResult = require("../../hooks/generate-step-result");
+const shallowCopyResultToDispatch = require("../../hooks/shallow-copy-result-to-dispatch");
 const updateGameAfterStep = require("../../hooks/update-game-after-step");
 const updateTimestampOnGame = require("../../hooks/update-timestamp-on-game");
 
@@ -34,11 +36,17 @@ module.exports = {
     all: [
       iff(
         isProvider("external"),
-        alterItems((item, context) => {
-          item.newInfo = newInfoForUser(item.newInfos, context.params.user._id);
-        })
-      ),
-      protect("newInfos")
+        shallowCopyResultToDispatch(),
+        actOnDispatch(
+          alterItems((item, context) => {
+            item.newInfo = newInfoForUser(
+              item.newInfos,
+              context.params.user._id
+            );
+            delete item.newInfos;
+          })
+        )
+      )
     ],
     find: [],
     get: [],
