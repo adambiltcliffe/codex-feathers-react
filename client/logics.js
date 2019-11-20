@@ -44,7 +44,7 @@ const feathersErrorLogic = createLogic({
     next(action);
   },
   process({ getState, action }, dispatch, done) {
-    if (action.error) {
+    if (action.error && action.type != "auth/reauthenticateFailure") {
       dispatch(
         alertActions.alert({
           message: action.payload.error.message,

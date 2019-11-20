@@ -9,7 +9,7 @@ const {
   required,
   setNow
 } = require("feathers-hooks-common");
-
+const errors = require("@feathersjs/errors");
 const {
   hashPassword,
   protect
@@ -18,10 +18,8 @@ const {
 module.exports = {
   before: {
     all: [],
-    find: [
-      iff(isProvider("external"), discardQuery("password")),
-      authenticate("jwt")
-    ],
+    // note: find is not authenticated
+    find: [iff(isProvider("external"), discardQuery("password"))],
     get: [authenticate("jwt")],
     create: [
       keep("username", "email", "password"),
@@ -57,7 +55,15 @@ module.exports = {
     all: [],
     find: [],
     get: [],
-    create: [],
+    create: [
+      ctx => {
+        if (ctx.error.errorType == "uniqueViolated") {
+          throw new errors.Conflict(
+            `Username or email already in use: ${ctx.error.key}`
+          );
+        }
+      }
+    ],
     update: [],
     patch: [],
     remove: []
