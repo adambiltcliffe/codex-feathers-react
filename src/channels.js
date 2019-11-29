@@ -52,8 +52,6 @@ module.exports = function(app) {
   // steps service needs to publish created and personalise per user
 
   app.service("steps").publish("created", (data, context) => {
-    console.log(context.result);
-    console.log(context.dispatch);
     const chans = [];
     Object.entries(context.result.newInfos).map(([k, v]) => {
       if (k != "observer") {
