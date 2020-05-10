@@ -1,10 +1,11 @@
 #!/bin/bash
 
-INTERACTIVE="yes"
+read -p "Press <enter> to run interactively..." -t 4
+test $? -eq 0 && INTERACTIVE=yes || INTERACTIVE=no
 
 
 set -e
-exec 3>&1 2>/root/server-install.log 1>&2
+exec 3>&1 2>${HOME}/server-install.log 1>&2
 
 
 function prompt {
@@ -14,8 +15,11 @@ function prompt {
     TEMP=""
     if [[ "${INTERACTIVE}" = "yes" ]]; then
     read -p "Set ${PARAMETER_DESCRIPTION} [${PARAMETER_DEFAULT}]: " TEMP 1>&3
-    fi
     declare -g ${PARAMETER_NAME}="${TEMP:-${PARAMETER_DEFAULT}}"
+    else
+    echo ${PARAMETER_NAME}="${PARAMETER_DEFAULT}" 1>&3
+    declare -g ${PARAMETER_NAME}="${PARAMETER_DEFAULT}"
+    fi
 }
 
 prompt "application description" APPLICATION_DESCRIPTION "Codex Application Server"
