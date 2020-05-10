@@ -40,6 +40,26 @@ const Info = props => {
         <a href="https://github.com/adambiltcliffe/codex">here</a> (if you don't
         know which is it, report against the web client first).
       </Content>
+      <Heading subtitle>Change history</Heading>
+      <Content>
+        May 2020: Bug fixes
+        <ul>
+          <li>
+            <b>Healing</b> no longer heals buildings.
+          </li>
+          <li>
+            Your hero should now level up properly when an opposing hero dies.
+          </li>
+          <li>
+            Harmony should no longer create tokens when your opponent casts a
+            spell.
+          </li>
+          <li>
+            Destroying a unit with a <b>Dies:</b> trigger with Final Smash
+            should no longer freeze the game.
+          </li>
+        </ul>
+      </Content>
     </Box>
   );
 };
