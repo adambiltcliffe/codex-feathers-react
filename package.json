@@ -34,7 +34,7 @@
     "distribute": "webpack --config webpack.prod.js"
   },
   "dependencies": {
-    "@adam.biltcliffe/codex": "^0.2.1",
+    "@adam.biltcliffe/codex": "^0.2.2",
     "@feathersjs/authentication": "^4.5.3",
     "@feathersjs/authentication-client": "^4.5.4",
     "@feathersjs/authentication-local": "^4.5.4",
