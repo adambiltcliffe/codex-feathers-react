@@ -70,6 +70,7 @@ cat > "${CONFIG_PATH}" <<EOF
 }
 EOF
 fi
+sudo -H -u codex ln -s ../../config.json "${APPLICATION_PATH}/config/production.json"
 echo "done" 1>&3
 
 
@@ -85,6 +86,7 @@ Restart=always
 User=${USER_NAME}
 Group=${USER_NAME}
 WorkingDirectory=${APPLICATION_PATH}
+Environment=NODE_ENV=production
 ExecStart=/usr/bin/npm start
 
 [Install]
