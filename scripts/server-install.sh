@@ -115,7 +115,7 @@ echo "done" 1>&3
 
 echo -n "* Generating Diffie-Hellman parameters... " 1>&3
 if [[ ! -e /etc/nginx/dhparam.pem ]]; then
-openssl dhparam -out /etc/nginx/dhparam.pem 4096;
+openssl dhparam -out /etc/nginx/dhparam.pem 2048;
 fi;
 echo "done" 1>&3
 
