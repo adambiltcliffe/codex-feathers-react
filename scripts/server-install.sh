@@ -99,6 +99,13 @@ service "${APPLICATION_NAME}" start
 echo "done" 1>&3
 
 
+echo -n "* Installing the sudoers file... " 1>&3
+cat > "/etc/sudoers.d/${APPLICATION_NAME}" <<EOF
+${USER_NAME} ALL=(root) NOPASSWD: /usr/sbin/service codex restart
+EOF
+echo "done" 1>&3
+
+
 echo -n "* Acquiring an SSL certificate... " 1>&3
 if [[ ! -e "/etc/letsencrypt/live/${DOMAIN_NAME}" ]]; then
 certbot certonly --non-interactive --agree-tos --webroot --webroot-path /var/www/html --domain "${DOMAIN_NAME}" --email "${DOMAIN_EMAIL}"
