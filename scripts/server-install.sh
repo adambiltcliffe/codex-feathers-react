@@ -105,7 +105,7 @@ echo "done" 1>&3
 
 echo -n "* Acquiring an SSL certificate... " 1>&3
 if [[ ! -e "/etc/letsencrypt/live/${DOMAIN_NAME}" ]]; then
-certbot certonly --non-interactive --agree-tos --webroot --domain "${DOMAIN_NAME}" --email "${DOMAIN_EMAIL}"
+certbot certonly --non-interactive --agree-tos --webroot --webroot-path /var/www/html --domain "${DOMAIN_NAME}" --email "${DOMAIN_EMAIL}"
 fi
 echo "done" 1>&3
 
