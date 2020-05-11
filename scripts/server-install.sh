@@ -195,7 +195,7 @@ server {
     # Serve RFC-5785 well known URIs from /var/www/html.
     location ~ ^/\.well-known {
         root /var/www/html;
-        try_files $uri $uri/ =404;
+        try_files \$uri \$uri/ =404;
     }
 
     # Pass all other requests to the appplication.
