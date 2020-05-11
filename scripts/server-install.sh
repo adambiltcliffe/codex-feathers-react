@@ -32,7 +32,8 @@ prompt "user name" USER_NAME "codex"
 
 
 echo -n "* Installing packages for the application... " 1>&3
-apt-get install -y git nodejs npm openssl
+apt-get update
+apt-get install -y certbot git nginx nodejs npm openssl sudo
 echo "done" 1>&3
 
 
@@ -95,11 +96,6 @@ echo "done" 1>&3
 
 echo -n "* Starting the service... " 1>&3
 service "${APPLICATION_NAME}" start
-echo "done" 1>&3
-
-
-echo -n "* Installing packages for the proxy... " 1>&3
-apt-get install -y certbot nginx openssl
 echo "done" 1>&3
 
 
