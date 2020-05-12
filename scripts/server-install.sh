@@ -1,27 +1,31 @@
 #!/bin/bash
 
+
+
+
+# Preparation
+# -----------
+
+
+# Determine if we should run interactively:
 read -p "Press <enter> to run interactively..." -t 4
 test $? -eq 0 && INTERACTIVE=yes || INTERACTIVE=no
 
 
-set -e
-exec 3>&1 2>${HOME}/server-install.log 1>&2
-
-
+# Collect user input:
 function prompt {
     PARAMETER_DESCRIPTION="${1}"
     PARAMETER_NAME="${2}"
     PARAMETER_DEFAULT="${3}"
     TEMP=""
     if [[ "${INTERACTIVE}" = "yes" ]]; then
-    read -p "Set ${PARAMETER_DESCRIPTION} [${PARAMETER_DEFAULT}]: " TEMP 1>&3
-    declare -g ${PARAMETER_NAME}="${TEMP:-${PARAMETER_DEFAULT}}"
+        read -p "Set ${PARAMETER_DESCRIPTION} [${PARAMETER_DEFAULT}]: " TEMP
+        declare -g ${PARAMETER_NAME}="${TEMP:-${PARAMETER_DEFAULT}}"
     else
-    echo ${PARAMETER_NAME}="${PARAMETER_DEFAULT}" 1>&3
-    declare -g ${PARAMETER_NAME}="${PARAMETER_DEFAULT}"
+        echo ${PARAMETER_NAME}="${PARAMETER_DEFAULT}"
+        declare -g ${PARAMETER_NAME}="${PARAMETER_DEFAULT}"
     fi
 }
-
 prompt "application description" APPLICATION_DESCRIPTION "Codex Application Server"
 prompt "application name" APPLICATION_NAME "codex"
 prompt "application port" APPLICATION_PORT "3030"
@@ -31,37 +35,51 @@ prompt "repository url" REPOSITORY_URL "https://github.com/adambiltcliffe/codex-
 prompt "user name" USER_NAME "codex"
 
 
-echo -n "* Installing packages for the application... " 1>&3
+# Exit on error:
+set -e
+
+
+# Redirect stdout/stder to a file:
+exec 3>&1 2>${HOME}/server-install.log 1>&2
+
+
+
+
+# Main Process
+# ------------
+
+
+echo -n "* Installing packages for the application... " >&3
 apt-get update
 apt-get install -y certbot git nginx nodejs npm openssl sudo
-echo "done" 1>&3
+echo "done" >&3
 
 
-echo -n "* Creating the application user and group... " 1>&3
+echo -n "* Creating the application user and group... " >&3
 USER_HOME="/var/lib/${USER_NAME}"
 if ! grep -Pq "^${USER_NAME}:" /etc/passwd; then
-adduser --system --home "${USER_HOME}" --group --disabled-password --disabled-login "${USER_NAME}"
+    adduser --system --home "${USER_HOME}" --group --disabled-password --disabled-login "${USER_NAME}"
 fi
-echo "done" 1>&3
+echo "done" >&3
 
 
-echo -n "* Installing the application... " 1>&3
+echo -n "* Installing the application... " >&3
 APPLICATION_PATH="${USER_HOME}/${APPLICATION_NAME}"
 if ! [[ -e "${APPLICATION_PATH}" ]]; then
-sudo -H -u codex git clone "${REPOSITORY_URL}" "${APPLICATION_PATH}"
-pushd "${APPLICATION_PATH}"
-sudo -H -u codex npm install
-sudo -H -u codex npm run distribute
-popd
+    sudo -H -u codex git clone "${REPOSITORY_URL}" "${APPLICATION_PATH}"
+    pushd "${APPLICATION_PATH}"
+    sudo -H -u codex npm install
+    sudo -H -u codex npm run distribute
+    popd
 fi
-echo "done" 1>&3
+echo "done" >&3
 
 
-echo -n "* Installing the configuration file... " 1>&3
+echo -n "* Installing the configuration file... " >&3
 CONFIG_PATH="${USER_HOME}/config.json"
 if ! [[ -e "${CONFIG_PATH}" ]]; then
-install /dev/null "${CONFIG_PATH}" -o "${USER_NAME}" -g "${USER_NAME}" -m 0600;
-cat > "${CONFIG_PATH}" <<EOF
+    install /dev/null "${CONFIG_PATH}" -o "${USER_NAME}" -g "${USER_NAME}" -m 0600;
+    cat > "${CONFIG_PATH}" <<EOF
 {
   "authentication": {
     "secret": "$(openssl rand -base64 24)"
@@ -71,10 +89,10 @@ cat > "${CONFIG_PATH}" <<EOF
 EOF
 fi
 sudo -H -u codex ln -s ../../config.json "${APPLICATION_PATH}/config/production.json"
-echo "done" 1>&3
+echo "done" >&3
 
 
-echo -n "* Installing the service... " 1>&3
+echo -n "* Installing the service... " >&3
 cat > "/etc/systemd/system/${APPLICATION_NAME}.service" <<EOF
 [Unit]
 Description=${APPLICATION_DESCRIPTION}
@@ -93,36 +111,36 @@ ExecStart=/usr/bin/npm start
 WantedBy=multi-user.target
 EOF
 systemctl daemon-reload
-echo "done" 1>&3
+echo "done" >&3
 
 
-echo -n "* Starting the service... " 1>&3
+echo -n "* Starting the service... " >&3
 service "${APPLICATION_NAME}" start
-echo "done" 1>&3
+echo "done" >&3
 
 
-echo -n "* Installing the sudoers file... " 1>&3
+echo -n "* Installing the sudoers file... " >&3
 cat > "/etc/sudoers.d/${APPLICATION_NAME}" <<EOF
 ${USER_NAME} ALL=(root) NOPASSWD: /usr/sbin/service codex restart
 EOF
-echo "done" 1>&3
+echo "done" >&3
 
 
-echo -n "* Acquiring an SSL certificate... " 1>&3
+echo -n "* Acquiring an SSL certificate... " >&3
 if [[ ! -e "/etc/letsencrypt/live/${DOMAIN_NAME}" ]]; then
-certbot certonly --non-interactive --agree-tos --webroot --webroot-path /var/www/html --domain "${DOMAIN_NAME}" --email "${DOMAIN_EMAIL}"
+    certbot certonly --non-interactive --agree-tos --webroot --webroot-path /var/www/html --domain "${DOMAIN_NAME}" --email "${DOMAIN_EMAIL}"
 fi
-echo "done" 1>&3
+echo "done" >&3
 
 
-echo -n "* Generating Diffie-Hellman parameters... " 1>&3
+echo -n "* Generating Diffie-Hellman parameters... " >&3
 if [[ ! -e /etc/nginx/dhparam.pem ]]; then
-openssl dhparam -out /etc/nginx/dhparam.pem 2048;
+    openssl dhparam -out /etc/nginx/dhparam.pem 2048;
 fi;
-echo "done" 1>&3
+echo "done" >&3
 
 
-echo -n "* Installing the HTTP proxy... " 1>&3
+echo -n "* Installing the HTTP proxy... " >&3
 cat > "/etc/nginx/sites-available/${APPLICATION_NAME}" <<EOF
 # http://${DOMAIN_NAME} -- https redirect
 server {
@@ -211,10 +229,10 @@ server {
 }
 EOF
 ln -s "../sites-available/${APPLICATION_NAME}" "/etc/nginx/sites-enabled/${APPLICATION_NAME}"
-echo "done" 1>&3
+echo "done" >&3
 
 
-echo -n "* Restarting the HTTP server... " 1>&3
+echo -n "* Restarting the HTTP server... " >&3
 nginx -t
 service nginx restart
-echo "done" 1>&3
+echo "done" >&3
