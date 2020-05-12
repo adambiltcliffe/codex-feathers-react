@@ -17,7 +17,6 @@ function prompt {
     PARAMETER_DESCRIPTION="${1}"
     PARAMETER_NAME="${2}"
     PARAMETER_DEFAULT="${3}"
-    TEMP=""
     if [[ "${INTERACTIVE}" = "yes" ]]; then
         read -p "Set ${PARAMETER_DESCRIPTION} [${PARAMETER_DEFAULT}]: " TEMP
         declare -g ${PARAMETER_NAME}="${TEMP:-${PARAMETER_DEFAULT}}"
