@@ -87,7 +87,11 @@ if ! [[ -e "${CONFIG_PATH}" ]]; then
 }
 EOF
 fi
-sudo -H -u codex ln -s ../../config.json "${APPLICATION_PATH}/config/production.json"
+CONFIG_LINK_PATH = "${APPLICATION_PATH}/config/production.json"
+if [[ -e "${CONFIG_LINK_PATH}" ]]; then
+rm "${CONFIG_LINK_PATH}"
+fi
+sudo -H -u codex ln -s ../../config.json "${CONFIG_LINK_PATH}"
 echo "done" >&3
 
 
