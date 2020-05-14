@@ -59,6 +59,7 @@ USER_HOME="/var/lib/${USER_NAME}"
 if ! grep -Pq "^${USER_NAME}:" /etc/passwd; then
     adduser --system --home "${USER_HOME}" --group --disabled-password --disabled-login "${USER_NAME}"
 fi
+cd "${USER_HOME}"
 echo "done" >&3
 
 
