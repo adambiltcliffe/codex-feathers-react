@@ -38,7 +38,7 @@ prompt "user name" USER_NAME "codex"
 set -e
 
 
-# Redirect stdout/stder to a file:
+# Redirect stdout/stderr to a file:
 exec 3>&1 2>${HOME}/server-install.log 1>&2
 
 
@@ -88,7 +88,7 @@ if ! [[ -e "${CONFIG_PATH}" ]]; then
 }
 EOF
 fi
-CONFIG_LINK_PATH = "${APPLICATION_PATH}/config/production.json"
+CONFIG_LINK_PATH="${APPLICATION_PATH}/config/production.json"
 if [[ -e "${CONFIG_LINK_PATH}" ]]; then
 rm "${CONFIG_LINK_PATH}"
 fi
