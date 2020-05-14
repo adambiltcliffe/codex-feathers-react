@@ -119,7 +119,7 @@ echo "done" >&3
 
 
 echo -n "* Starting the service... " >&3
-service "${APPLICATION_NAME}" start
+service "${APPLICATION_NAME}" restart
 echo "done" >&3
 
 
