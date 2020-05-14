@@ -232,7 +232,7 @@ server {
 
 }
 EOF
-ln -s "../sites-available/${APPLICATION_NAME}" "/etc/nginx/sites-enabled/${APPLICATION_NAME}"
+ln -f -s "../sites-available/${APPLICATION_NAME}" "/etc/nginx/sites-enabled/${APPLICATION_NAME}"
 echo "done" >&3
 
 
