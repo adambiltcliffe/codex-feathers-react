@@ -8,7 +8,7 @@ git reset --hard
 git clean -f -x -d
 git pull
 
-ln -s ../../config.json config/production.json
+ln -f -s ../../config.json config/production.json
 
 npm install
 npm run distribute
