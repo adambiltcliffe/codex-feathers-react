@@ -195,7 +195,7 @@ server {
     ssl_certificate_key /etc/letsencrypt/live/${DOMAIN_NAME}/privkey.pem;
 
     # Protocols
-    ssl_protocols TLSv1.2 TLSv1.3;
+    ssl_protocols TLSv1.2;
 
     # Sessions
     ssl_session_cache shared:SSL:10m;
